@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>ทดสอบเครื่องอัดสรุปประชุม</title>
+<title>เครื่องอัดสรุปประชุม</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Trirong:wght@600;700&family=Pridi:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -59,6 +59,14 @@ audio{width:100%;margin-top:10px}
 .sum{margin-top:12px;font-size:14.5px}
 .sum h3{font:700 16px var(--display);margin:12px 0 4px}
 .sum ul{margin:4px 0;padding-left:20px}
+.sum h4{font:600 15px var(--body);margin:10px 0 2px;color:var(--accent)}
+.tw{overflow-x:auto;margin:6px 0}
+.sum table{border-collapse:collapse;font-size:13.5px;min-width:100%}
+.sum th,.sum td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.sum th{background:var(--soft)}
+.nm{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;margin:0 0 10px}
+.nm small{grid-column:2;color:var(--ink3);font-size:12.5px;line-height:1.4}
+.nm input{padding:8px 10px}
 details{margin-top:4px}
 summary{cursor:pointer;color:var(--ink2);font-size:14px}
 #log{white-space:pre-wrap;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;background:#2B1420;color:#FCE9EF;border-radius:14px;padding:12px;max-height:320px;overflow:auto;margin-top:10px}
@@ -69,8 +77,8 @@ summary{cursor:pointer;color:var(--ink2);font-size:14px}
 </head>
 <body>
 <main>
-  <h1>ทดสอบเครื่องอัดสรุปประชุม</h1>
-  <p class="sub">หน้านี้ใช้ทดลอง 3 เรื่องบนมือถือจริงก่อนทำเครื่องมือเต็ม ทำตามทีละขั้น แล้วกดคัดลอกผลทดสอบส่งกลับมา</p>
+  <h1>เครื่องอัดสรุปประชุม</h1>
+  <p class="sub">อัดเสียงประชุม ถอดเป็นข้อความไทย แยกคนพูด แล้วสรุปให้ ยังเป็นรุ่นทดลอง ใช้เสร็จแล้วกดคัดลอกผลทดสอบส่งกลับมา</p>
 
   <section class="card">
     <h2><span class="n">0</span>ใส่คีย์ Gemini</h2>
@@ -84,14 +92,15 @@ summary{cursor:pointer;color:var(--ink2);font-size:14px}
   </section>
 
   <section class="card">
-    <h2><span class="n">1</span>อัดเสียงได้ไหม ล็อกจอแล้วเป็นยังไง</h2>
-    <p class="hint">กดอัด พูดไปเรื่อยๆ แล้วลองกดล็อกจอสัก 20 วินาที ปลดล็อกกลับมาแล้วกดหยุด ระบบจะบอกว่าเสียงหายไปช่วงไหน</p>
+    <h2><span class="n">1</span>อัดเสียง</h2>
+    <p class="hint">อัดยาวเป็นชั่วโมงได้ ระบบแบ่งเป็นช่วงละ 20 นาทีให้เอง ถ้าประชุมนาน เสียบสายชาร์จไว้ เปิดหน้านี้ค้างไว้และอย่าสลับไปแอปอื่น ถ้าหน้าเว็บปิดไปกลางทาง เปิดกลับมาจะกู้เสียงที่อัดไว้ได้</p>
+    <div class="res warn" id="recover" hidden><b id="recoverMsg"></b><div class="row" style="margin-top:8px"><button id="recoverBtn">กู้เสียงนี้</button><button id="discardBtn">ลบทิ้ง</button></div></div>
     <button class="pri rec" id="recBtn">● เริ่มอัด</button>
     <div class="timer" id="timer">00:00</div>
     <div class="status" id="recStatus"><span class="dot" id="dot"></span>ยังไม่ได้อัด</div>
     <label class="check"><input type="checkbox" id="wake" checked> กันจอดับระหว่างอัด (Wake Lock)</label>
     <div id="recResult"></div>
-    <audio id="player" controls hidden></audio>
+    <div id="players"></div>
 
     <div class="or">หรือ</div>
     <label class="file">📁 เลือกไฟล์เสียง เช่นไฟล์จากแอปบันทึกเสียงของ iPhone (.m4a)
@@ -102,10 +111,15 @@ summary{cursor:pointer;color:var(--ink2);font-size:14px}
 
   <section class="card">
     <h2><span class="n">2</span>ถอดเสียงไทย + แยกคนพูด</h2>
-    <p class="hint">ใช้ Gemini 3.5 Transcribe แยกได้สูงสุด 8 คน ไฟล์ละไม่เกิน 30 นาที</p>
+    <p class="hint">ใช้ Gemini 3.5 Transcribe แยกได้สูงสุด 8 คน เสียงที่อัดยาวจะถอดทีละช่วงแล้วต่อกันให้ ประชุม 1 ชั่วโมงใช้เวลาถอดหลายนาที</p>
     <label class="check"><input type="checkbox" id="diar" checked> แยกคนพูด</label>
     <label class="check"><input type="checkbox" id="thai" checked> ระบุภาษาไทย + อังกฤษ (ถ้าไม่ติ๊ก ให้ระบบเดาภาษาเอง)</label>
     <div class="row" style="margin-top:12px"><button class="pri" id="trBtn" disabled>ถอดเสียง</button><span id="trMsg" class="hint" style="margin:0"></span></div>
+    <div id="names" hidden>
+      <p class="hint" style="margin:14px 0 6px">ใส่ชื่อแต่ละคน ดูจากประโยคแรกที่คนนั้นพูด ถ้าใส่ชื่อเดียวกันให้ 2 คน ระบบจะรวมเป็นคนเดียว</p>
+      <div id="nameList"></div>
+      <div class="row" style="margin-top:8px"><button id="guessBtn">ให้ AI เดาชื่อจากบทสนทนา</button><span id="guessMsg" class="hint" style="margin:0"></span></div>
+    </div>
     <div id="trOut"></div>
     <div id="rateBox" hidden>
       <p class="hint" style="margin:12px 0 0">ถอดแม่นแค่ไหน</p>
@@ -116,9 +130,11 @@ summary{cursor:pointer;color:var(--ink2);font-size:14px}
   </section>
 
   <section class="card">
-    <h2><span class="n">3</span>ลองสรุป (แถม)</h2>
-    <p class="hint">ดูว่าสรุปภาษาไทยออกมาเป็นยังไง ใช้ Gemini Flash-Lite ฟรีวันละหลายร้อยครั้ง</p>
-    <div class="row"><button class="pri" id="sumBtn" disabled>สรุปประชุม</button><span id="sumMsg" class="hint" style="margin:0"></span></div>
+    <h2><span class="n">3</span>สรุป</h2>
+    <p class="hint">ใส่ชื่อคนก่อนสรุป สรุปจะได้เรียกชื่อถูก ใช้ Gemini Flash ถ้าโควตาฟรีหมดจะสลับไปใช้ Flash-Lite ให้เอง</p>
+    <label class="f" for="tpl">แบบสรุป</label>
+    <select id="tpl"><option value="meeting">รายงานประชุมละเอียด</option><option value="plan">แผนงาน</option><option value="short">สั้น อ่านจบใน 1 นาที</option></select>
+    <div class="row" style="margin-top:10px"><button class="pri" id="sumBtn" disabled>สรุป</button><button id="copySum">คัดลอกสรุป</button><span id="sumMsg" class="hint" style="margin:0"></span></div>
     <div id="sumOut" class="sum"></div>
   </section>
 
@@ -172,67 +188,108 @@ $('testKey').onclick = async () => {
   } catch (e) { log('key error', String(e.message || e)); $('keyMsg').textContent = '❌ ' + (e.message || e); }
 };
 
-/* ---------- recording ---------- */
-let rec, stream, chunks = [], startAt = 0, tick, wakeLock = null, hiddenAt = null, hiddenTotal = 0, muteAt = null, muteTotal = 0;
-let audioBlob = null, audioMime = '', audioName = '', wallSec = 0;
+/* ---------- recording (long meetings: overlapping segments) ---------- */
+// A long meeting is recorded as several overlapping files. Each file stays under the
+// 30-minute limit of the transcription model; the overlap lets us line speakers up later.
+const QS = new URLSearchParams(location.search);
+const SEG = Math.max(30, +QS.get('seg') || 20 * 60);           // seconds per segment
+const OV = Math.min(Math.max(3, +QS.get('ov') || 15), SEG / 3); // overlap seconds
+const STEP = SEG - OV;
+let stream, startAt = 0, tick, wakeLock = null, hiddenAt = null, hiddenTotal = 0, muteAt = null, muteTotal = 0;
+let recs = [], segBlobs = [], recMime = '', recording = false, wallSec = 0;
+let segments = [], audioMime = '', audioName = '';
+
+/* chunk backup in IndexedDB, so a crash or reload does not lose a long recording */
+const idb = (() => { let p; return () => p || (p = new Promise((res, rej) => {
+  const o = indexedDB.open('chy-rec', 1);
+  o.onupgradeneeded = () => o.result.createObjectStore('chunks', {autoIncrement: true});
+  o.onsuccess = () => res(o.result); o.onerror = () => rej(o.error);
+})); })();
+async function idbDo(mode, fn){ try { const db = await idb(); return await new Promise((res, rej) => { const tx = db.transaction('chunks', mode); const r = fn(tx.objectStore('chunks')); tx.oncomplete = () => res(r && r.result); tx.onerror = () => rej(tx.error); }); } catch (e) { log('backup error', String(e.message || e)); } }
+const backupPut = rec => idbDo('readwrite', s => s.add(rec));
+const backupClear = () => idbDo('readwrite', s => s.clear());
+const backupAll = () => idbDo('readonly', s => s.getAll());
 
 async function getWake(){
-  if (!$('wake').checked || !('wakeLock' in navigator)) return;
+  if (!$('wake').checked || !('wakeLock' in navigator) || !recording) return;
   try { wakeLock = await navigator.wakeLock.request('screen'); log('wakeLock acquired'); wakeLock.addEventListener('release', () => log('wakeLock released')); }
   catch (e) { log('wakeLock error', e.name + ': ' + e.message); }
 }
 document.addEventListener('visibilitychange', () => {
-  log('visibility', document.visibilityState, rec ? 'rec=' + rec.state : '');
-  if (!rec || rec.state === 'inactive') return;
+  log('visibility', document.visibilityState, recording ? 'recording' : '');
+  if (!recording) return;
   if (document.hidden) hiddenAt = performance.now();
   else { if (hiddenAt) hiddenTotal += (performance.now() - hiddenAt) / 1000; hiddenAt = null; getWake(); }
 });
 addEventListener('pagehide', () => log('pagehide'));
 addEventListener('pageshow', () => log('pageshow'));
+addEventListener('beforeunload', e => { if (recording) { e.preventDefault(); e.returnValue = ''; } });
+
+function startSegment(idx){
+  const r = new MediaRecorder(stream, recMime ? {mimeType: recMime, audioBitsPerSecond: 32000} : {});
+  const ch = []; let seq = 0;
+  r.idx = idx;
+  r.done = new Promise(res => r.onstop = () => { segBlobs[idx] = new Blob(ch, {type: r.mimeType || recMime || 'audio/webm'}); log('segment stopped', idx, segBlobs[idx].size); res(); });
+  r.ondataavailable = e => { if (e.data && e.data.size) { ch.push(e.data); backupPut({seg: idx, seq: seq++, blob: e.data, type: r.mimeType || recMime}); } };
+  r.onpause = () => log('recorder paused (by system)', idx);
+  r.onerror = e => log('recorder error', idx, String(e.error || e));
+  r.start(1000);
+  log('segment start', idx, r.mimeType || '(default)');
+  recs.push(r);
+  return r;
+}
 
 $('recBtn').onclick = async () => {
-  if (rec && rec.state !== 'inactive') { rec.stop(); return; }
+  if (recording) return stopAll();
   try { stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true, autoGainControl: true}}); }
   catch (e) { log('mic error', e.name + ': ' + e.message); setResult('bad', 'เปิดไมค์ไม่ได้', e.message); return; }
-  const mime = MIMES.find(m => MediaRecorder.isTypeSupported(m)) || '';
-  rec = new MediaRecorder(stream, mime ? {mimeType: mime, audioBitsPerSecond: 32000} : {});
-  log('recorder mime', rec.mimeType || '(default)');
-  chunks = []; hiddenTotal = 0; muteTotal = 0; hiddenAt = null; muteAt = null;
+  await backupClear();
+  recMime = MIMES.find(m => MediaRecorder.isTypeSupported(m)) || '';
+  recs = []; segBlobs = []; hiddenTotal = 0; muteTotal = 0; hiddenAt = null; muteAt = null;
   const track = stream.getAudioTracks()[0];
   track.onmute = () => { muteAt = performance.now(); log('track muted'); };
   track.onunmute = () => { if (muteAt) muteTotal += (performance.now() - muteAt) / 1000; muteAt = null; log('track unmuted'); };
   track.onended = () => log('track ended');
-  rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
-  rec.onpause = () => log('recorder paused (by system)');
-  rec.onresume = () => log('recorder resumed');
-  rec.onerror = e => log('recorder error', String(e.error || e));
-  rec.onstop = onStop;
-  rec.start(1000);
-  startAt = performance.now();
-  log('recording started');
+  recording = true; startAt = performance.now();
+  startSegment(0);
+  log('recording started', {seg: SEG, ov: OV});
   $('recBtn').textContent = '■ หยุดอัด'; $('recBtn').classList.add('on');
-  $('dot').classList.add('live'); $('recStatus').lastChild.textContent = 'กำลังอัด...';
-  $('recResult').innerHTML = ''; $('player').hidden = true;
-  tick = setInterval(() => $('timer').textContent = fmt((performance.now() - startAt) / 1000), 250);
+  $('dot').classList.add('live'); $('recStatus').lastChild.textContent = 'กำลังอัด... เปิดหน้านี้ค้างไว้ อย่าสลับแอป';
+  $('recResult').innerHTML = ''; $('players').innerHTML = ''; $('recover').hidden = true;
+  tick = setInterval(onTick, 250);
   getWake();
 };
 
-async function onStop(){
+function onTick(){
+  const el = (performance.now() - startAt) / 1000;
+  $('timer').textContent = fmt(el);
+  const last = recs[recs.length - 1];
+  if (el >= (last.idx + 1) * STEP) startSegment(last.idx + 1);          // next file starts OV seconds early
+  recs.forEach(r => { if (r.state === 'recording' && r !== recs[recs.length - 1] && el >= r.idx * STEP + SEG) r.stop(); });
+  const n = recs.length;
+  $('recStatus').lastChild.textContent = 'กำลังอัด... ' + (n > 1 ? `ช่วงที่ ${n} · ` : '') + 'เปิดหน้านี้ค้างไว้ อย่าสลับแอป';
+}
+
+async function stopAll(){
   clearInterval(tick);
+  recording = false;
   wallSec = (performance.now() - startAt) / 1000;
   if (muteAt) muteTotal += (performance.now() - muteAt) / 1000;
+  recs.forEach(r => { if (r.state !== 'inactive') r.stop(); });
+  await Promise.all(recs.map(r => r.done));
   stream.getTracks().forEach(t => t.stop());
   if (wakeLock) { try { await wakeLock.release(); } catch {} wakeLock = null; }
   $('recBtn').textContent = '● เริ่มอัดใหม่'; $('recBtn').classList.remove('on');
   $('dot').classList.remove('live'); $('recStatus').lastChild.textContent = 'หยุดแล้ว';
-  const type = rec.mimeType || (chunks[0] && chunks[0].type) || 'audio/webm';
-  const blob = new Blob(chunks, {type});
-  const dur = await mediaDuration(blob);
+  const blobs = segBlobs.filter(b => b && b.size);
+  const durs = [];
+  for (const b of blobs) durs.push(await mediaDuration(b));
+  const dur = durs.reduce((a, b) => a + b, 0) - OV * Math.max(0, blobs.length - 1);
   const lost = Math.max(0, wallSec - dur);
-  log('stopped', {wall: +wallSec.toFixed(1), audio: +dur.toFixed(1), lost: +lost.toFixed(1), hidden: +hiddenTotal.toFixed(1), muted: +muteTotal.toFixed(1), bytes: blob.size, type});
-  if (lost < 2) setResult('good', 'อัดครบ ไม่มีเสียงหาย', `เวลาจริง ${fmt(wallSec)} · ได้เสียง ${fmt(dur)}` + (hiddenTotal > 1 ? ` · ระหว่างนั้นจอปิดหรือสลับแอป ${fmt(hiddenTotal)} แต่ยังอัดต่อได้` : ''));
+  log('stopped', {wall: +wallSec.toFixed(1), audio: +dur.toFixed(1), lost: +lost.toFixed(1), segs: blobs.length, segDur: durs.map(d => +d.toFixed(1)), hidden: +hiddenTotal.toFixed(1), muted: +muteTotal.toFixed(1), bytes: blobs.reduce((a, b) => a + b.size, 0), type: blobs[0] && blobs[0].type});
+  if (lost < 2) setResult('good', 'อัดครบ ไม่มีเสียงหาย', `เวลาจริง ${fmt(wallSec)} · ได้เสียง ${fmt(dur)}` + (blobs.length > 1 ? ` · แบ่งเป็น ${blobs.length} ช่วง` : '') + (hiddenTotal > 1 ? ` · ระหว่างนั้นจอปิดหรือสลับแอป ${fmt(hiddenTotal)} แต่ยังอัดต่อได้` : ''));
   else setResult(lost > 5 ? 'bad' : 'warn', `เสียงหายไปประมาณ ${fmt(lost)}`, `เวลาจริง ${fmt(wallSec)} · ได้เสียง ${fmt(dur)}` + (hiddenTotal > 1 ? ` · จอปิดหรือสลับแอปรวม ${fmt(hiddenTotal)}` : '') + (muteTotal > 1 ? ` · ไมค์ถูกระบบปิด ${fmt(muteTotal)}` : ''));
-  setAudio(blob, type, 'บันทึกในเว็บ');
+  setSegments(blobs, blobs[0] ? blobs[0].type : recMime, 'บันทึกในเว็บ', dur);
 }
 
 function mediaDuration(blob){
@@ -256,16 +313,18 @@ $('fileIn').onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
   const dur = await mediaDuration(f);
   log('file chosen', {type: f.type || '(none)', name: f.name.replace(/.*\./, '*.'), bytes: f.size, dur: +dur.toFixed(1)});
-  setAudio(f, f.type, 'ไฟล์ ' + f.name, dur);
+  setSegments([f], f.type, 'ไฟล์ ' + f.name, dur);
+  if (dur > 30 * 60) $('srcInfo').textContent += ' · ⚠️ ไฟล์ที่อัปโหลดถอดได้แค่ 30 นาทีแรก ถ้าประชุมยาว ให้อัดในหน้านี้แทน ระบบจะแบ่งช่วงให้เอง';
 };
 
-function setAudio(blob, type, label, dur){
-  audioBlob = blob; audioMime = apiMime(type, label); audioName = label;
-  $('player').src = URL.createObjectURL(blob); $('player').hidden = false;
-  $('srcInfo').textContent = `พร้อมถอดเสียง: ${label} · ${(blob.size / 1048576).toFixed(1)} MB` + (dur ? ` · ${fmt(dur)}` : '');
-  $('trBtn').disabled = false;
-  if (dur > 30 * 60) $('srcInfo').textContent += ' · ⚠️ ยาวเกิน 30 นาที ระบบจะถอดได้แค่ 30 นาทีแรก (เครื่องมือเต็มจะตัดแบ่งให้)';
+function setSegments(blobs, type, label, dur){
+  segments = blobs; audioMime = apiMime(type, label); audioName = label;
+  $('players').innerHTML = blobs.map((b, i) => (blobs.length > 1 ? `<div class="src">ช่วงที่ ${i + 1}</div>` : '') + `<audio controls src="${URL.createObjectURL(b)}"></audio>`).join('');
+  const mb = blobs.reduce((a, b) => a + b.size, 0) / 1048576;
+  $('srcInfo').textContent = blobs.length ? `พร้อมถอดเสียง: ${label} · ${mb.toFixed(1)} MB` + (dur ? ` · ${fmt(dur)}` : '') + (blobs.length > 1 ? ` · ${blobs.length} ช่วง` : '') : '';
+  $('trBtn').disabled = !blobs.length;
 }
+
 function apiMime(t, name){
   t = (t || '').toLowerCase(); name = (name || '').toLowerCase();
   if (t.includes('webm')) return 'audio/webm';
@@ -277,6 +336,23 @@ function apiMime(t, name){
   if (t.includes('flac')) return 'audio/flac';
   return 'audio/m4a';
 }
+
+/* recover a recording that was interrupted (reload, crash, battery) */
+(async () => {
+  const all = await backupAll();
+  if (!all || !all.length) return;
+  const segs = [...new Set(all.map(c => c.seg))].sort((a, b) => a - b);
+  const mins = Math.round(all.filter(c => c.seg === segs[0]).length / 60 + (segs.length - 1) * STEP / 60);
+  $('recover').hidden = false;
+  $('recoverMsg').textContent = `มีเสียงที่อัดไว้ครั้งก่อนในเครื่องนี้ ประมาณ ${mins || 1} นาที`;
+  log('backup found', {chunks: all.length, segs: segs.length});
+  $('recoverBtn').onclick = () => {
+    const blobs = segs.map(s => { const cs = all.filter(c => c.seg === s).sort((a, b) => a.seq - b.seq); return new Blob(cs.map(c => c.blob), {type: cs[0].type || 'audio/webm'}); });
+    setSegments(blobs, blobs[0].type, 'เสียงที่กู้คืน');
+    $('recover').hidden = true; log('backup restored', blobs.length);
+  };
+  $('discardBtn').onclick = async () => { await backupClear(); $('recover').hidden = true; log('backup discarded'); };
+})();
 
 /* ---------- Gemini calls ---------- */
 const b64 = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(blob); });
@@ -326,7 +402,7 @@ async function interact(body, onWait){
     log('store:false rejected, retrying without'); delete body.store;
     ({r, j} = await post(body, onWait));
   }
-  if (!r.ok) { const m = (j.error && j.error.message) || ''; log('api error', r.status, m.slice(0, 200)); throw new Error(friendly(r.status, m)); }
+  if (!r.ok) { const m = (j.error && j.error.message) || ''; log('api error', r.status, m.slice(0, 200)); const err = new Error(friendly(r.status, m)); err.status = r.status; throw err; }
   for (let i = 0; i < 150 && j.status === 'in_progress' && j.id; i++) {
     await sleep(2000);
     const pr = await fetch(API + '/v1beta/interactions/' + j.id, {headers: {'x-goog-api-key': key()}});
@@ -344,69 +420,153 @@ function outContent(j){
 }
 
 /* ---------- transcribe ---------- */
-let transcript = '';
+let items = [], order = [], names = {}, transcript = '';
+
 $('trBtn').onclick = async () => {
   if (!key()) { $('trMsg').textContent = 'ใส่คีย์ก่อน'; return; }
-  if (!audioBlob) return;
-  $('trBtn').disabled = true; $('trOut').innerHTML = ''; $('sumBtn').disabled = true;
-  $('trMsg').innerHTML = '<span class="spin"></span>กำลังถอดเสียง...';
+  if (!segments.length) return;
+  $('trBtn').disabled = true; $('trOut').innerHTML = ''; $('names').hidden = true; $('sumBtn').disabled = true;
   const t = performance.now();
+  const n = segments.length, parts = [];
   try {
-    let input;
-    if (audioBlob.size < 14 * 1048576) {
-      input = {type: 'audio', data: await b64(audioBlob), mime_type: audioMime};
-      log('sending inline', audioMime, audioBlob.size);
-    } else {
-      $('trMsg').innerHTML = '<span class="spin"></span>กำลังอัปโหลดไฟล์...';
-      input = {type: 'audio', uri: await uploadFile(audioBlob, audioMime), mime_type: audioMime};
-      $('trMsg').innerHTML = '<span class="spin"></span>กำลังถอดเสียง...';
+    for (let k = 0; k < n; k++) {
+      const pre = n > 1 ? `ช่วงที่ ${k + 1}/${n}: ` : '';
+      const busy = (i, w) => $('trMsg').innerHTML = `<span class="spin"></span>${pre}Google คนใช้เยอะ กำลังลองใหม่ครั้งที่ ${i} (รอ ${w} วินาที)...`;
+      const blob = segments[k];
+      let input;
+      if (blob.size < 14 * 1048576) {
+        $('trMsg').innerHTML = `<span class="spin"></span>${pre}กำลังถอดเสียง...`;
+        input = {type: 'audio', data: await b64(blob), mime_type: audioMime};
+        log('sending inline', k, audioMime, blob.size);
+      } else {
+        $('trMsg').innerHTML = `<span class="spin"></span>${pre}กำลังอัปโหลดไฟล์...`;
+        input = {type: 'audio', uri: await uploadFile(blob, audioMime), mime_type: audioMime};
+        $('trMsg').innerHTML = `<span class="spin"></span>${pre}กำลังถอดเสียง...`;
+      }
+      const mode = {type: 'verbatim'};
+      if ($('diar').checked) mode.diarization_mode = 'speaker';
+      const tc = {mode};
+      if ($('thai').checked) tc.language_codes = ['th-TH', 'en-US'];
+      const s0 = performance.now();
+      const j = await interact({model: TR_MODEL, input: [input], generation_config: {transcription_config: tc}, store: false}, busy);
+      const content = outContent(j);
+      const text = content.map(c => c.text).join('\n').trim();
+      const anns = content.flatMap(c => (c.annotations || []).filter(a => a.type === 'word_info' && typeof a.text === 'string').map(a => ({spk: a.speaker || null, text: a.text.trim()}))).filter(a => a.text);
+      log('segment transcribed', k, {secs: +((performance.now() - s0) / 1000).toFixed(1), chars: text.length, anns: anns.length, speakers: new Set(anns.map(a => a.spk)).size, annLen: anns.slice(0, 4).map(a => a.text.length)});
+      parts.push({anns: anns.length ? anns : (text ? [{spk: null, text}] : [])});
     }
-    const mode = {type: 'verbatim'};
-    if ($('diar').checked) mode.diarization_mode = 'speaker';
-    const tc = {mode};
-    if ($('thai').checked) tc.language_codes = ['th-TH', 'en-US'];
-    const j = await interact({model: TR_MODEL, input: [input], generation_config: {transcription_config: tc}, store: false}, (n, w) => $('trMsg').innerHTML = `<span class="spin"></span>Google คนใช้เยอะ กำลังลองใหม่ครั้งที่ ${n} (รอ ${w} วินาที)...`);
+    ({items, order} = stitch(parts));
+    names = {};
     const secs = ((performance.now() - t) / 1000).toFixed(1);
-    const content = outContent(j);
-    const text = content.map(c => c.text).join('\n').trim();
-    const words = content.flatMap(c => (c.annotations || []).filter(a => a.type === 'word_info').map(a => ({...a, _src: c.text})));
-    const speakers = [...new Set(words.map(w => w.speaker).filter(Boolean))];
-    log('anno shape', words.slice(0, 4).map(w => ({s: w.start_index, e: w.end_index, len: (w.text || '').length, spk: w.speaker})), 'srcLen', content.map(c => (c.text || '').length));
-    log('transcribed', {secs: +secs, chars: text.length, words: words.length, speakers: speakers.length, keys: Object.keys(j), sampleAnno: words[0] ? Object.keys(words[0]).filter(k => k !== '_src') : null});
-    if (!text) { $('trMsg').textContent = '⚠️ ไม่ได้ข้อความกลับมา ดูบันทึกทางเทคนิค'; log('raw', JSON.stringify(j).slice(0, 1500)); return; }
-    $('trMsg').textContent = `✅ เสร็จใน ${secs} วินาที` + (speakers.length ? ` · พบ ${speakers.length} คน` : '');
-    transcript = render(text, words, speakers);
+    log('transcribed', {secs: +secs, segs: n, items: items.length, speakers: order.length});
+    if (!items.length) { $('trMsg').textContent = '⚠️ ไม่ได้ข้อความกลับมา ดูบันทึกทางเทคนิค'; return; }
+    $('trMsg').textContent = `✅ เสร็จใน ${secs} วินาที` + (order.length ? ` · พบ ${order.length} คน` : '');
+    buildNameInputs(); renderTranscript();
     $('rateBox').hidden = false; $('sumBtn').disabled = false;
   } catch (e) {
     log('transcribe error', String(e.message || e));
-    $('trMsg').textContent = '❌ ' + (e.message || e);
+    $('trMsg').textContent = '❌ ' + (n > 1 ? `ถอดได้ ${parts.length}/${n} ช่วง: ` : '') + (e.message || e);
   } finally { $('trBtn').disabled = false; }
 };
 
-function render(text, words, speakers){
-  if (!words.length || !speakers.length) { $('trOut').innerHTML = `<div class="plain">${esc(text)}</div>`; return text; }
-  const idx = s => speakers.indexOf(s) + 1;
-  const segs = [];
-  words.forEach(w => {
-    const last = segs[segs.length - 1];
-    if (last && last.spk === w.speaker) last.words.push(w); else segs.push({spk: w.speaker, words: [w]});
-  });
-  // Each annotation already carries its own text; prefer it. Index slicing is a fallback only
-  // (the indices may count UTF-8 bytes, which breaks on Thai text).
-  const thai = /[฀-๿]/;
-  const lines = segs.map(s => {
-    let t;
-    if (s.words.every(w => typeof w.text === 'string')) {
-      t = s.words.map(w => w.text.trim()).filter(Boolean).reduce((acc, x) => !acc ? x : acc + ((thai.test(acc.slice(-1)) && thai.test(x[0])) ? '' : ' ') + x, '');
-    } else {
-      const a = s.words[0], b = s.words[s.words.length - 1];
-      t = (Number.isInteger(a.start_index) && Number.isInteger(b.end_index)) ? a._src.slice(a.start_index, b.end_index) : '';
-    }
-    return {n: idx(s.spk), t: t.trim()};
-  }).filter(l => l.t);
-  $('trOut').innerHTML = '<div class="tr">' + lines.map(l => `<div class="seg"><span class="spk s${l.n > 5 ? 0 : l.n}">คนที่ ${l.n}</span><p>${esc(l.t)}</p></div>`).join('') + '</div>';
-  return lines.map(l => `คนที่ ${l.n}: ${l.t}`).join('\n');
+/* Join segments. The last OV seconds of one segment are the first OV seconds of the next,
+   so the same sentences show up twice: matching them tells us which local speaker label
+   in the new segment is which person from before, and lets us drop the duplicate text. */
+const norm = s => s.replace(/[\s.,!?'"“”…\-–—:;()]/g, '');
+function bigrams(s){ const b = new Map(); for (let i = 0; i < s.length - 1; i++) { const g = s.slice(i, i + 2); b.set(g, (b.get(g) || 0) + 1); } return b; }
+function overlapScore(a, b){
+  a = norm(a); b = norm(b);
+  if (a.length < 6 || b.length < 6) return 0;
+  const A = bigrams(a), B = bigrams(b); let hit = 0, na = 0, nb = 0;
+  A.forEach(v => na += v); B.forEach(v => nb += v);
+  A.forEach((v, g) => hit += Math.min(v, B.get(g) || 0));
+  return hit / Math.min(na, nb);   // how much of the shorter text appears in the longer one
 }
+function stitch(parts){
+  const out = [], order = []; let gn = 0;
+  parts.forEach((p, k) => {
+    const map = {}, anns = p.anns.map(a => ({...a}));
+    if (k > 0 && out.length) {
+      const tail0 = Math.max(0, out.length - 8), votes = {};
+      anns.slice(0, 8).forEach(h => {
+        let best = 0, bi = -1;
+        for (let i = tail0; i < out.length; i++) { if (out[i].drop) continue; const sc = overlapScore(h.text, out[i].text); if (sc > best) { best = sc; bi = i; } }
+        if (best < 0.6) return;
+        const tl = out[bi];
+        if (h.spk && tl.g) { const v = votes[h.spk] || (votes[h.spk] = {}); v[tl.g] = (v[tl.g] || 0) + norm(h.text).length; }
+        if (norm(tl.text).length <= norm(h.text).length) tl.drop = true; else h.drop = true;
+      });
+      const used = new Set();
+      Object.entries(votes).map(([sp, v]) => [sp, ...Object.entries(v).sort((a, b) => b[1] - a[1])[0]])
+        .sort((a, b) => b[2] - a[2])
+        .forEach(([sp, g]) => { if (!used.has(g)) { map[sp] = g; used.add(g); } });
+      // One unmatched voice left and one earlier person not yet matched: almost always the same person.
+      const freeLocal = [...new Set(anns.map(a => a.spk).filter(sp => sp && !(sp in map)))];
+      const freeGlobal = order.filter(g => !used.has(g));
+      if (Object.keys(map).length && freeLocal.length === 1 && freeGlobal.length === 1) map[freeLocal[0]] = freeGlobal[0];
+      log('stitch', k, {matched: anns.filter(a => a.drop).length + out.filter(o => o.drop && o.seg === k - 1).length, map});
+    }
+    anns.forEach(a => {
+      let g = null;
+      if (a.spk) { if (!(a.spk in map)) { map[a.spk] = 'g' + (++gn); order.push(map[a.spk]); } g = map[a.spk]; }
+      if (!a.drop) out.push({g, text: a.text, seg: k});
+    });
+  });
+  return {items: out.filter(o => !o.drop), order};
+}
+
+const label = g => (names[g] || '').trim() || 'คนที่ ' + (order.indexOf(g) + 1);
+const joinText = (a, b) => !a ? b : a + ' ' + b;
+
+function renderTranscript(){
+  if (!order.length) {
+    const plain = items.map(i => i.text).join('\n');
+    $('trOut').innerHTML = `<div class="plain">${esc(plain)}</div>`; transcript = plain; return;
+  }
+  const lines = [];
+  items.forEach(it => {
+    const who = label(it.g), last = lines[lines.length - 1];
+    if (last && last.who === who) last.t = joinText(last.t, it.text);
+    else lines.push({who, t: it.text, c: Math.min(order.indexOf(it.g) + 1, 6) % 6});
+  });
+  $('trOut').innerHTML = '<div class="tr">' + lines.map(l => `<div class="seg"><span class="spk s${l.c}">${esc(l.who)}</span><p>${esc(l.t)}</p></div>`).join('') + '</div>';
+  transcript = lines.map(l => `${l.who}: ${l.t}`).join('\n');
+}
+
+function buildNameInputs(){
+  if (!order.length) { $('names').hidden = true; return; }
+  $('nameList').innerHTML = order.map((g, i) => {
+    const first = items.find(it => it.g === g);
+    const hint = first ? first.text.slice(0, 40) + (first.text.length > 40 ? '…' : '') : '';
+    return `<label class="nm"><span class="spk s${Math.min(i + 1, 6) % 6}">คนที่ ${i + 1}</span><input type="text" data-g="${g}" placeholder="ใส่ชื่อ" autocomplete="off"><small>${esc(hint)}</small></label>`;
+  }).join('');
+  $('nameList').querySelectorAll('input').forEach(inp => inp.oninput = () => { names[inp.dataset.g] = inp.value; renderTranscript(); });
+  $('names').hidden = false;
+}
+
+$('guessBtn').onclick = async () => {
+  if (!transcript) return;
+  $('guessBtn').disabled = true; $('guessMsg').innerHTML = '<span class="spin"></span>กำลังเดา...';
+  const plain = items.map(it => `คนที่ ${order.indexOf(it.g) + 1}: ${it.text}`).join('\n').slice(0, 30000);
+  const prompt = `จากบทสนทนาด้านล่าง เดาชื่อหรือชื่อเล่นของแต่ละคน โดยดูจากที่คนอื่นเรียก หรือที่แนะนำตัว
+ตอบเป็น JSON อย่างเดียว รูปแบบ {"คนที่ 1": "ชื่อ", "คนที่ 2": ""} ถ้าเดาไม่ได้ให้ใส่ "" ห้ามเดามั่ว
+
+${plain}`;
+  try {
+    const text = await askText(prompt);
+    const m = text.match(/\{[\s\S]*\}/); const guess = m ? JSON.parse(m[0]) : {};
+    let filled = 0;
+    order.forEach((g, i) => {
+      const v = (guess['คนที่ ' + (i + 1)] || '').trim();
+      const inp = $('nameList').querySelector(`input[data-g="${g}"]`);
+      if (v && inp && !inp.value) { inp.value = v; names[g] = v; filled++; }
+    });
+    renderTranscript();
+    log('guess names', {filled, of: order.length});
+    $('guessMsg').textContent = filled ? `เติมให้ ${filled} คน ตรวจดูอีกที แก้ได้` : 'เดาไม่ได้ เพราะในบทสนทนาไม่มีใครเรียกชื่อ พิมพ์เองได้เลย';
+  } catch (e) { log('guess error', String(e.message || e)); $('guessMsg').textContent = '❌ ' + (e.message || e); }
+  finally { $('guessBtn').disabled = false; }
+};
 
 document.querySelectorAll('.rate').forEach(g => g.addEventListener('click', e => {
   if (e.target.tagName !== 'BUTTON') return;
@@ -415,40 +575,100 @@ document.querySelectorAll('.rate').forEach(g => g.addEventListener('click', e =>
 }));
 
 /* ---------- summary ---------- */
+// Try the stronger model first; fall back to Flash-Lite if it is missing or out of free quota.
+const SUM_MODELS = ['models/gemini-3.5-flash', SUM_MODEL];
+async function askText(prompt, onWait){
+  let err;
+  for (const m of SUM_MODELS) {
+    try {
+      const j = await interact({model: m, input: [{type: 'text', text: prompt}], store: false}, onWait);
+      log('model used', m.replace('models/', ''));
+      return outContent(j).map(c => c.text).join('\n').trim();
+    } catch (e) { err = e; if (![400, 403, 404, 429].includes(e.status)) throw e; log('model fallback', m.replace('models/', ''), e.status); }
+  }
+  throw err;
+}
+
+const RULES = `กติกา:
+- เขียนภาษาไทย อ่านง่าย ใช้ Markdown (หัวข้อ ##, ###, bullet และตาราง)
+- เรียกคนตามชื่อที่ใช้ในบทสนทนา
+- เก็บตัวเลข วันที่ ราคา ชื่อสินค้า ชื่อแคมเปญ ให้ตรงตามที่พูด
+- ห้ามแต่งข้อมูลที่ไม่มีในบทสนทนา ถ้าหัวข้อไหนไม่มีข้อมูลให้เขียนว่า "ไม่มีในบทสนทนา"`;
+const TEMPLATES = {
+  meeting: `คุณเป็นเลขาที่จดรายงานการประชุมอย่างละเอียด สรุปการประชุมต่อไปนี้ตามหัวข้อ:
+## ภาพรวม
+3-5 ประโยค: ประชุมเรื่องอะไร ใครอยู่ในวง ได้ข้อสรุปหลักอะไร
+## รายละเอียดแต่ละประเด็น
+แยกเป็น ### ชื่อประเด็น ตามลำดับที่คุย แต่ละประเด็นบอก: ใครเสนออะไร เหตุผล ข้อมูลหรือตัวเลขที่ยกมา ความเห็นที่ไม่ตรงกัน และสรุปว่าจบที่อะไร
+## สิ่งที่ตกลงกัน
+## สิ่งที่ต้องทำต่อ
+ตาราง: | งาน | ใครทำ | กำหนดส่ง | หมายเหตุ |
+## เรื่องที่ยังค้าง หรือต้องถามเพิ่ม
+## ตัวเลขและข้อมูลสำคัญ`,
+  plan: `คุณเป็นผู้ช่วยวางแผนงาน สรุปบทสนทนาต่อไปนี้ให้เป็นแผนงานที่เอาไปทำต่อได้ทันที ตามหัวข้อ:
+## เป้าหมาย
+## สิ่งที่จะทำ
+แยกเป็น ### ชื่องาน แต่ละงานบอก: ทำอะไร ทำยังไง ใช้อะไรบ้าง
+## ไทม์ไลน์
+ตาราง: | ช่วงเวลา | งาน | ใครทำ |
+## ผู้รับผิดชอบ
+ตาราง: | คน | หน้าที่ |
+## งบประมาณและทรัพยากร
+## วิธีวัดผล (KPI)
+## ความเสี่ยงและทางแก้
+## สิ่งที่ต้องทำสัปดาห์นี้`,
+  short: `สรุปบทสนทนาต่อไปนี้แบบสั้น อ่านจบใน 1 นาที ตามหัวข้อ:
+## ใจความสำคัญ
+ไม่เกิน 5 bullet
+## สิ่งที่ต้องทำต่อ
+bullet: งาน — ใครทำ — กำหนดส่ง`
+};
+
 $('sumBtn').onclick = async () => {
   if (!transcript) return;
   $('sumBtn').disabled = true; $('sumOut').innerHTML = '';
   $('sumMsg').innerHTML = '<span class="spin"></span>กำลังสรุป...';
-  const prompt = `สรุปการประชุมต่อไปนี้เป็นภาษาไทย กระชับ อ่านง่าย ใช้ Markdown ตามหัวข้อนี้เท่านั้น:
-## ภาพรวม (2-3 ประโยค)
-## ประเด็นที่คุย (bullet)
-## สิ่งที่ตกลงกัน (bullet)
-## สิ่งที่ต้องทำต่อ (bullet: งาน — ใครทำ — กำหนดส่ง ถ้ามีในบทสนทนา ถ้าไม่มีให้เขียนว่า "ไม่ระบุ")
-ห้ามแต่งข้อมูลที่ไม่มีในบทสนทนา
-
-บทสนทนา:
-${transcript}`;
+  const tpl = $('tpl').value;
+  const prompt = `${TEMPLATES[tpl]}\n\n${RULES}\n\nบทสนทนา:\n${transcript}`;
   const t = performance.now();
   try {
-    const j = await interact({model: SUM_MODEL, input: [{type: 'text', text: prompt}], store: false}, (n, w) => $('sumMsg').innerHTML = `<span class="spin"></span>Google คนใช้เยอะ กำลังลองใหม่ครั้งที่ ${n} (รอ ${w} วินาที)...`);
-    const text = outContent(j).map(c => c.text).join('\n').trim();
-    log('summary', {secs: +((performance.now() - t) / 1000).toFixed(1), chars: text.length});
+    const text = await askText(prompt, (n, w) => $('sumMsg').innerHTML = `<span class="spin"></span>Google คนใช้เยอะ กำลังลองใหม่ครั้งที่ ${n} (รอ ${w} วินาที)...`);
+    log('summary', {tpl, secs: +((performance.now() - t) / 1000).toFixed(1), inChars: transcript.length, chars: text.length});
     $('sumMsg').textContent = '✅ เสร็จแล้ว';
     $('sumOut').innerHTML = md(text);
   } catch (e) { log('summary error', String(e.message || e)); $('sumMsg').textContent = '❌ ' + (e.message || e); }
   finally { $('sumBtn').disabled = false; }
 };
+function inline(s){ return esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }
 function md(s){
-  let h = '', inList = false;
-  s.split('\n').forEach(line => {
-    const l = esc(line.trim()).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
-    if (/^[-*•]\s+/.test(l)) { if (!inList) { h += '<ul>'; inList = true; } h += '<li>' + l.replace(/^[-*•]\s+/, '') + '</li>'; return; }
-    if (inList) { h += '</ul>'; inList = false; }
-    if (/^#{1,4}\s/.test(l)) h += '<h3>' + l.replace(/^#+\s/, '') + '</h3>';
-    else if (l) h += '<p>' + l + '</p>';
+  const out = []; let list = false, table = null;
+  const flush = () => {
+    if (list) { out.push('</ul>'); list = false; }
+    if (table) {
+      const rows = table.filter(r => !/^\|?\s*:?-{2,}/.test(r)).map(r => r.replace(/^\||\|$/g, '').split('|').map(c => c.trim()));
+      out.push('<div class="tw"><table>' + rows.map((r, i) => '<tr>' + r.map(c => i ? `<td>${inline(c)}</td>` : `<th>${inline(c)}</th>`).join('') + '</tr>').join('') + '</table></div>');
+      table = null;
+    }
+  };
+  s.split('\n').forEach(raw => {
+    const l = raw.trim();
+    if (/^\|.*\|$/.test(l)) { if (list) { out.push('</ul>'); list = false; } (table || (table = [])).push(l); return; }
+    if (table) flush();
+    if (/^[-*•]\s+/.test(l)) { if (!list) { out.push('<ul>'); list = true; } out.push('<li>' + inline(l.replace(/^[-*•]\s+/, '')) + '</li>'); return; }
+    flush();
+    if (/^###\s/.test(l)) out.push('<h4>' + inline(l.replace(/^#+\s/, '')) + '</h4>');
+    else if (/^#{1,2}\s/.test(l)) out.push('<h3>' + inline(l.replace(/^#+\s/, '')) + '</h3>');
+    else if (l) out.push('<p>' + inline(l) + '</p>');
   });
-  return h + (inList ? '</ul>' : '');
+  flush();
+  return out.join('');
 }
+
+$('copySum').onclick = async () => {
+  const txt = $('sumOut').innerText.trim(); if (!txt) return;
+  try { await navigator.clipboard.writeText(txt); $('copySum').textContent = '✅ คัดลอกแล้ว'; } catch { $('copySum').textContent = 'คัดลอกไม่ได้'; }
+  setTimeout(() => $('copySum').textContent = 'คัดลอกสรุป', 2500);
+};
 
 /* ---------- copy report ---------- */
 $('copyLog').onclick = async () => {
