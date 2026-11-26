@@ -301,18 +301,37 @@ async function uploadFile(blob, mime){
   return file.uri;
 }
 
-async function interact(body){
-  let r = await fetch(API + '/v1beta/interactions', {method: 'POST', headers: {'x-goog-api-key': key(), 'Content-Type': 'application/json'}, body: JSON.stringify(body)});
-  let j = await r.json().catch(() => ({}));
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+// Busy (503/500) and rate limits (429) are usually temporary: wait and retry automatically.
+const RETRY_WAIT = [3000, 8000, 20000];
+async function post(body, onWait){
+  for (let i = 0; ; i++) {
+    const r = await fetch(API + '/v1beta/interactions', {method: 'POST', headers: {'x-goog-api-key': key(), 'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+    const j = await r.json().catch(() => ({}));
+    if (r.ok || ![429, 500, 503].includes(r.status) || i >= RETRY_WAIT.length || /day|daily/i.test(j.error && j.error.message || '')) return {r, j};
+    log('busy', r.status, (j.error && j.error.message || '').slice(0, 120), 'retry in', RETRY_WAIT[i] / 1000 + 's');
+    if (onWait) onWait(i + 1, RETRY_WAIT[i] / 1000, r.status);
+    await sleep(RETRY_WAIT[i]);
+  }
+}
+function friendly(status, msg){
+  if (status === 503 || status === 500) return 'ระบบของ Google คนใช้เยอะอยู่ (ไม่ใช่ปัญหาคีย์) ลองใหม่อีกสักครู่';
+  if (status === 429) return /day|daily|per_day/i.test(msg) ? 'ใช้ครบโควตาฟรีของวันนี้แล้ว พรุ่งนี้ใช้ได้ใหม่' : 'กดถี่เกินโควตาฟรี รอประมาณ 1 นาทีแล้วลองใหม่';
+  if (status === 400 && /api key/i.test(msg)) return 'คีย์ไม่ถูกต้อง ลองคัดลอกคีย์ใหม่';
+  return msg || ('HTTP ' + status);
+}
+async function interact(body, onWait){
+  let {r, j} = await post(body, onWait);
   if (!r.ok && body.store === false && /store/i.test(JSON.stringify(j))) {
     log('store:false rejected, retrying without'); delete body.store;
-    r = await fetch(API + '/v1beta/interactions', {method: 'POST', headers: {'x-goog-api-key': key(), 'Content-Type': 'application/json'}, body: JSON.stringify(body)});
-    j = await r.json().catch(() => ({}));
+    ({r, j} = await post(body, onWait));
   }
-  if (!r.ok) throw new Error((j.error && j.error.message) || ('HTTP ' + r.status));
+  if (!r.ok) { const m = (j.error && j.error.message) || ''; log('api error', r.status, m.slice(0, 200)); throw new Error(friendly(r.status, m)); }
   for (let i = 0; i < 150 && j.status === 'in_progress' && j.id; i++) {
-    await new Promise(res => setTimeout(res, 2000));
-    j = await (await fetch(API + '/v1beta/interactions/' + j.id, {headers: {'x-goog-api-key': key()}})).json();
+    await sleep(2000);
+    const pr = await fetch(API + '/v1beta/interactions/' + j.id, {headers: {'x-goog-api-key': key()}});
+    const pj = await pr.json().catch(() => ({}));
+    if (pr.ok) j = pj; else log('poll', pr.status);
   }
   if (j.status && j.status !== 'completed') log('interaction status', j.status, j.errors || '');
   if (j.errors && j.errors.length) throw new Error(j.errors.map(e => e.message).join('; '));
@@ -346,12 +365,13 @@ $('trBtn').onclick = async () => {
     if ($('diar').checked) mode.diarization_mode = 'speaker';
     const tc = {mode};
     if ($('thai').checked) tc.language_codes = ['th-TH', 'en-US'];
-    const j = await interact({model: TR_MODEL, input: [input], generation_config: {transcription_config: tc}, store: false});
+    const j = await interact({model: TR_MODEL, input: [input], generation_config: {transcription_config: tc}, store: false}, (n, w) => $('trMsg').innerHTML = `<span class="spin"></span>Google คนใช้เยอะ กำลังลองใหม่ครั้งที่ ${n} (รอ ${w} วินาที)...`);
     const secs = ((performance.now() - t) / 1000).toFixed(1);
     const content = outContent(j);
     const text = content.map(c => c.text).join('\n').trim();
     const words = content.flatMap(c => (c.annotations || []).filter(a => a.type === 'word_info').map(a => ({...a, _src: c.text})));
     const speakers = [...new Set(words.map(w => w.speaker).filter(Boolean))];
+    log('anno shape', words.slice(0, 4).map(w => ({s: w.start_index, e: w.end_index, len: (w.text || '').length, spk: w.speaker})), 'srcLen', content.map(c => (c.text || '').length));
     log('transcribed', {secs: +secs, chars: text.length, words: words.length, speakers: speakers.length, keys: Object.keys(j), sampleAnno: words[0] ? Object.keys(words[0]).filter(k => k !== '_src') : null});
     if (!text) { $('trMsg').textContent = '⚠️ ไม่ได้ข้อความกลับมา ดูบันทึกทางเทคนิค'; log('raw', JSON.stringify(j).slice(0, 1500)); return; }
     $('trMsg').textContent = `✅ เสร็จใน ${secs} วินาที` + (speakers.length ? ` · พบ ${speakers.length} คน` : '');
@@ -371,12 +391,19 @@ function render(text, words, speakers){
     const last = segs[segs.length - 1];
     if (last && last.spk === w.speaker) last.words.push(w); else segs.push({spk: w.speaker, words: [w]});
   });
+  // Each annotation already carries its own text; prefer it. Index slicing is a fallback only
+  // (the indices may count UTF-8 bytes, which breaks on Thai text).
+  const thai = /[฀-๿]/;
   const lines = segs.map(s => {
-    const a = s.words[0], b = s.words[s.words.length - 1];
-    let t = (Number.isInteger(a.start_index) && Number.isInteger(b.end_index)) ? a._src.slice(a.start_index, b.end_index)
-      : s.words.map(w => w.text).join(/[฀-๿]/.test(s.words[0].text || '') ? '' : ' ');
+    let t;
+    if (s.words.every(w => typeof w.text === 'string')) {
+      t = s.words.map(w => w.text.trim()).filter(Boolean).reduce((acc, x) => !acc ? x : acc + ((thai.test(acc.slice(-1)) && thai.test(x[0])) ? '' : ' ') + x, '');
+    } else {
+      const a = s.words[0], b = s.words[s.words.length - 1];
+      t = (Number.isInteger(a.start_index) && Number.isInteger(b.end_index)) ? a._src.slice(a.start_index, b.end_index) : '';
+    }
     return {n: idx(s.spk), t: t.trim()};
-  });
+  }).filter(l => l.t);
   $('trOut').innerHTML = '<div class="tr">' + lines.map(l => `<div class="seg"><span class="spk s${l.n > 5 ? 0 : l.n}">คนที่ ${l.n}</span><p>${esc(l.t)}</p></div>`).join('') + '</div>';
   return lines.map(l => `คนที่ ${l.n}: ${l.t}`).join('\n');
 }
@@ -403,7 +430,7 @@ $('sumBtn').onclick = async () => {
 ${transcript}`;
   const t = performance.now();
   try {
-    const j = await interact({model: SUM_MODEL, input: [{type: 'text', text: prompt}], store: false});
+    const j = await interact({model: SUM_MODEL, input: [{type: 'text', text: prompt}], store: false}, (n, w) => $('sumMsg').innerHTML = `<span class="spin"></span>Google คนใช้เยอะ กำลังลองใหม่ครั้งที่ ${n} (รอ ${w} วินาที)...`);
     const text = outContent(j).map(c => c.text).join('\n').trim();
     log('summary', {secs: +((performance.now() - t) / 1000).toFixed(1), chars: text.length});
     $('sumMsg').textContent = '✅ เสร็จแล้ว';
