@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="th" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>ทดสอบเครื่องอัดสรุปประชุม</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Trirong:wght@600;700&family=Pridi:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF6F3;--card:#fff;--ink:#2B1420;--ink2:#6B4A57;--ink3:#A08592;--line:#F3E1E6;--accent:#D6336C;--soft:#FDE6EE;
+  --good:#169C68;--goodbg:#E2F4EA;--warn:#C77A08;--warnbg:#FCF1D6;--bad:#D9304F;--badbg:#FDE7E4;
+  --display:"Trirong",Georgia,serif;--body:"Pridi","Leelawadee UI",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15.5px/1.6 var(--body);-webkit-text-size-adjust:100%}
+main{max-width:640px;margin:0 auto;padding:18px 16px calc(40px + env(safe-area-inset-bottom))}
+h1{font:700 27px/1.25 var(--display);margin:6px 0 4px}
+.sub{color:var(--ink2);margin:0 0 16px;font-size:14.5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;margin:0 0 14px;box-shadow:0 12px 26px -22px rgba(214,51,108,.5)}
+.card h2{font:700 18px/1.3 var(--display);margin:0 0 4px;display:flex;align-items:center;gap:10px}
+.card h2 .n{display:grid;place-items:center;width:28px;height:28px;border-radius:10px;background:var(--soft);color:var(--accent);font:700 14px var(--body)}
+.hint{color:var(--ink2);font-size:13.5px;margin:0 0 12px}
+label.f{display:block;font-size:13.5px;color:var(--ink2);margin:8px 0 4px}
+input[type=password],input[type=text],select,textarea{width:100%;font:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid rgba(214,51,108,.25);border-color:var(--accent)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:600 15px var(--body);border:0;border-radius:14px;padding:11px 16px;cursor:pointer;background:var(--soft);color:var(--accent)}
+button.pri{background:linear-gradient(135deg,#D93A70,#F2836F);color:#fff;box-shadow:0 10px 18px -12px rgba(217,58,112,.8)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.rec{width:100%;padding:16px;font-size:17px}
+.rec.on{background:linear-gradient(135deg,#D9304F,#F0605E)}
+.timer{font:700 44px/1 var(--display);text-align:center;margin:12px 0 4px;letter-spacing:.02em}
+.status{text-align:center;color:var(--ink2);font-size:13.5px;min-height:1.6em}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ink3);margin-right:6px;vertical-align:1px}
+.dot.live{background:var(--bad);animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.25}}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--ink2);margin:10px 0 0}
+.check input{margin-top:5px;accent-color:var(--accent)}
+.res{border-radius:16px;padding:12px 14px;margin-top:12px;font-size:14.5px}
+.res.good{background:var(--goodbg);color:#0F6B47}.res.warn{background:var(--warnbg);color:#7A4A05}.res.bad{background:var(--badbg);color:#9B1C33}
+.res b{display:block;font-size:15.5px;margin-bottom:2px}
+audio{width:100%;margin-top:10px}
+.or{display:flex;align-items:center;gap:10px;color:var(--ink3);font-size:13px;margin:14px 0}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.file{display:block;border:1.5px dashed #F2C4D2;border-radius:16px;padding:14px;text-align:center;color:var(--ink2);font-size:14px;cursor:pointer}
+.file input{display:none}
+.src{font-size:13.5px;color:var(--ink2);margin-top:8px}
+.tr{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.seg{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start}
+.spk{font:600 12.5px var(--body);padding:3px 9px;border-radius:999px;white-space:nowrap;margin-top:2px}
+.seg p{margin:0}
+.spk.s1{background:#FDE6EE;color:#B0204F}.spk.s2{background:#E3EEFF;color:#2453A6}.spk.s3{background:#E2F4EA;color:#0F6B47}
+.spk.s4{background:#FFF0D6;color:#8A5A00}.spk.s5{background:#EEE6FF;color:#5B3BB0}.spk.s0{background:#EEE;color:#555}
+.plain{white-space:pre-wrap;background:#FFF9F7;border-radius:14px;padding:12px;margin-top:12px;font-size:14.5px}
+.rate{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.rate button{padding:8px 12px;font-size:14px}
+.rate button.on{background:var(--accent);color:#fff}
+.sum{margin-top:12px;font-size:14.5px}
+.sum h3{font:700 16px var(--display);margin:12px 0 4px}
+.sum ul{margin:4px 0;padding-left:20px}
+details{margin-top:4px}
+summary{cursor:pointer;color:var(--ink2);font-size:14px}
+#log{white-space:pre-wrap;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;background:#2B1420;color:#FCE9EF;border-radius:14px;padding:12px;max-height:320px;overflow:auto;margin-top:10px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.dot.live,.spin{animation:none}}
+</style>
+</head>
+<body>
+<main>
+  <h1>ทดสอบเครื่องอัดสรุปประชุม</h1>
+  <p class="sub">หน้านี้ใช้ทดลอง 3 เรื่องบนมือถือจริงก่อนทำเครื่องมือเต็ม ทำตามทีละขั้น แล้วกดคัดลอกผลทดสอบส่งกลับมา</p>
+
+  <section class="card">
+    <h2><span class="n">0</span>ใส่คีย์ Gemini</h2>
+    <p class="hint">ขอคีย์ฟรีได้ที่ aistudio.google.com คีย์จะเก็บไว้ในเครื่องนี้เท่านั้น ไม่ถูกส่งไปที่อื่นนอกจาก Google</p>
+    <input type="password" id="key" placeholder="วางคีย์ที่ขึ้นต้นด้วย AIza..." autocomplete="off" spellcheck="false">
+    <div class="row" style="margin-top:8px">
+      <button id="saveKey">บันทึกคีย์</button>
+      <button id="testKey">ทดสอบคีย์</button>
+      <span id="keyMsg" class="hint" style="margin:0"></span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">1</span>อัดเสียงได้ไหม ล็อกจอแล้วเป็นยังไง</h2>
+    <p class="hint">กดอัด พูดไปเรื่อยๆ แล้วลองกดล็อกจอสัก 20 วินาที ปลดล็อกกลับมาแล้วกดหยุด ระบบจะบอกว่าเสียงหายไปช่วงไหน</p>
+    <button class="pri rec" id="recBtn">● เริ่มอัด</button>
+    <div class="timer" id="timer">00:00</div>
+    <div class="status" id="recStatus"><span class="dot" id="dot"></span>ยังไม่ได้อัด</div>
+    <label class="check"><input type="checkbox" id="wake" checked> กันจอดับระหว่างอัด (Wake Lock)</label>
+    <div id="recResult"></div>
+    <audio id="player" controls hidden></audio>
+
+    <div class="or">หรือ</div>
+    <label class="file">📁 เลือกไฟล์เสียง เช่นไฟล์จากแอปบันทึกเสียงของ iPhone (.m4a)
+      <input type="file" id="fileIn" accept="audio/*,.m4a,.mp3,.wav,.aac,.webm,.ogg">
+    </label>
+    <div class="src" id="srcInfo"></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">2</span>ถอดเสียงไทย + แยกคนพูด</h2>
+    <p class="hint">ใช้ Gemini 3.5 Transcribe แยกได้สูงสุด 8 คน ไฟล์ละไม่เกิน 30 นาที</p>
+    <label class="check"><input type="checkbox" id="diar" checked> แยกคนพูด</label>
+    <label class="check"><input type="checkbox" id="thai" checked> ระบุภาษาไทย + อังกฤษ (ถ้าไม่ติ๊ก ให้ระบบเดาภาษาเอง)</label>
+    <div class="row" style="margin-top:12px"><button class="pri" id="trBtn" disabled>ถอดเสียง</button><span id="trMsg" class="hint" style="margin:0"></span></div>
+    <div id="trOut"></div>
+    <div id="rateBox" hidden>
+      <p class="hint" style="margin:12px 0 0">ถอดแม่นแค่ไหน</p>
+      <div class="rate" data-k="acc"><button>แม่นมาก</button><button>พอใช้</button><button>ผิดเยอะ</button></div>
+      <p class="hint" style="margin:10px 0 0">แยกคนพูดถูกไหม</p>
+      <div class="rate" data-k="spk"><button>ถูกหมด</button><button>ถูกบางส่วน</button><button>ผิด</button><button>ไม่ได้ทดสอบ</button></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">3</span>ลองสรุป (แถม)</h2>
+    <p class="hint">ดูว่าสรุปภาษาไทยออกมาเป็นยังไง ใช้ Gemini Flash-Lite ฟรีวันละหลายร้อยครั้ง</p>
+    <div class="row"><button class="pri" id="sumBtn" disabled>สรุปประชุม</button><span id="sumMsg" class="hint" style="margin:0"></span></div>
+    <div id="sumOut" class="sum"></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">✓</span>ส่งผลทดสอบกลับมา</h2>
+    <p class="hint">กดคัดลอก แล้ววางส่งในแชท ข้อมูลนี้ไม่มีคีย์และไม่มีข้อความที่ถอดได้</p>
+    <button class="pri" id="copyLog" style="width:100%">คัดลอกผลทดสอบ</button>
+    <details><summary>ดูบันทึกทางเทคนิค</summary><div id="log"></div></details>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const API = 'https://generativelanguage.googleapis.com';
+const TR_MODEL = 'models/gemini-3.5-transcribe';
+const SUM_MODEL = 'models/gemini-3.5-flash-lite';
+const T0 = performance.now();
+const logs = [];
+const ratings = {};
+function log(...a){
+  const t = ((performance.now() - T0) / 1000).toFixed(1).padStart(6);
+  const line = t + 's  ' + a.map(x => typeof x === 'string' ? x : JSON.stringify(x)).join(' ');
+  logs.push(line); $('log').textContent = logs.join('\n'); $('log').scrollTop = 1e9;
+}
+const fmt = s => { s = Math.max(0, Math.round(s)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- environment ---------- */
+log('UA', navigator.userAgent);
+log('standalone(home screen)', !!(navigator.standalone || matchMedia('(display-mode: standalone)').matches));
+log('MediaRecorder', typeof MediaRecorder !== 'undefined', 'wakeLock', 'wakeLock' in navigator);
+const MIMES = ['audio/webm;codecs=opus', 'audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/webm', 'audio/ogg;codecs=opus'];
+if (typeof MediaRecorder !== 'undefined') log('supported mimes', MIMES.filter(m => MediaRecorder.isTypeSupported(m)));
+
+/* ---------- key ---------- */
+const KEY_LS = 'chy-rec-key';
+$('key').value = localStorage.getItem(KEY_LS) || '';
+const key = () => $('key').value.trim();
+$('saveKey').onclick = () => { localStorage.setItem(KEY_LS, key()); $('keyMsg').textContent = 'บันทึกแล้ว'; };
+$('testKey').onclick = async () => {
+  $('keyMsg').textContent = 'กำลังทดสอบ...';
+  try {
+    const r = await fetch(API + '/v1beta/models?pageSize=200', {headers: {'x-goog-api-key': key()}});
+    const j = await r.json();
+    if (!r.ok) throw new Error((j.error && j.error.message) || r.status);
+    const names = (j.models || []).map(m => m.name);
+    log('key ok, models:', names.filter(n => /transcribe|flash/.test(n)));
+    const hasTr = names.some(n => n.includes('transcribe'));
+    $('keyMsg').textContent = hasTr ? '✅ ใช้ได้ พบโมเดลถอดเสียง' : '⚠️ คีย์ใช้ได้ แต่ไม่พบโมเดลถอดเสียงในรายการ';
+    localStorage.setItem(KEY_LS, key());
+  } catch (e) { log('key error', String(e.message || e)); $('keyMsg').textContent = '❌ ' + (e.message || e); }
+};
+
+/* ---------- recording ---------- */
+let rec, stream, chunks = [], startAt = 0, tick, wakeLock = null, hiddenAt = null, hiddenTotal = 0, muteAt = null, muteTotal = 0;
+let audioBlob = null, audioMime = '', audioName = '', wallSec = 0;
+
+async function getWake(){
+  if (!$('wake').checked || !('wakeLock' in navigator)) return;
+  try { wakeLock = await navigator.wakeLock.request('screen'); log('wakeLock acquired'); wakeLock.addEventListener('release', () => log('wakeLock released')); }
+  catch (e) { log('wakeLock error', e.name + ': ' + e.message); }
+}
+document.addEventListener('visibilitychange', () => {
+  log('visibility', document.visibilityState, rec ? 'rec=' + rec.state : '');
+  if (!rec || rec.state === 'inactive') return;
+  if (document.hidden) hiddenAt = performance.now();
+  else { if (hiddenAt) hiddenTotal += (performance.now() - hiddenAt) / 1000; hiddenAt = null; getWake(); }
+});
+addEventListener('pagehide', () => log('pagehide'));
+addEventListener('pageshow', () => log('pageshow'));
+
+$('recBtn').onclick = async () => {
+  if (rec && rec.state !== 'inactive') { rec.stop(); return; }
+  try { stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true, autoGainControl: true}}); }
+  catch (e) { log('mic error', e.name + ': ' + e.message); setResult('bad', 'เปิดไมค์ไม่ได้', e.message); return; }
+  const mime = MIMES.find(m => MediaRecorder.isTypeSupported(m)) || '';
+  rec = new MediaRecorder(stream, mime ? {mimeType: mime, audioBitsPerSecond: 32000} : {});
+  log('recorder mime', rec.mimeType || '(default)');
+  chunks = []; hiddenTotal = 0; muteTotal = 0; hiddenAt = null; muteAt = null;
+  const track = stream.getAudioTracks()[0];
+  track.onmute = () => { muteAt = performance.now(); log('track muted'); };
+  track.onunmute = () => { if (muteAt) muteTotal += (performance.now() - muteAt) / 1000; muteAt = null; log('track unmuted'); };
+  track.onended = () => log('track ended');
+  rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  rec.onpause = () => log('recorder paused (by system)');
+  rec.onresume = () => log('recorder resumed');
+  rec.onerror = e => log('recorder error', String(e.error || e));
+  rec.onstop = onStop;
+  rec.start(1000);
+  startAt = performance.now();
+  log('recording started');
+  $('recBtn').textContent = '■ หยุดอัด'; $('recBtn').classList.add('on');
+  $('dot').classList.add('live'); $('recStatus').lastChild.textContent = 'กำลังอัด...';
+  $('recResult').innerHTML = ''; $('player').hidden = true;
+  tick = setInterval(() => $('timer').textContent = fmt((performance.now() - startAt) / 1000), 250);
+  getWake();
+};
+
+async function onStop(){
+  clearInterval(tick);
+  wallSec = (performance.now() - startAt) / 1000;
+  if (muteAt) muteTotal += (performance.now() - muteAt) / 1000;
+  stream.getTracks().forEach(t => t.stop());
+  if (wakeLock) { try { await wakeLock.release(); } catch {} wakeLock = null; }
+  $('recBtn').textContent = '● เริ่มอัดใหม่'; $('recBtn').classList.remove('on');
+  $('dot').classList.remove('live'); $('recStatus').lastChild.textContent = 'หยุดแล้ว';
+  const type = rec.mimeType || (chunks[0] && chunks[0].type) || 'audio/webm';
+  const blob = new Blob(chunks, {type});
+  const dur = await mediaDuration(blob);
+  const lost = Math.max(0, wallSec - dur);
+  log('stopped', {wall: +wallSec.toFixed(1), audio: +dur.toFixed(1), lost: +lost.toFixed(1), hidden: +hiddenTotal.toFixed(1), muted: +muteTotal.toFixed(1), bytes: blob.size, type});
+  if (lost < 2) setResult('good', 'อัดครบ ไม่มีเสียงหาย', `เวลาจริง ${fmt(wallSec)} · ได้เสียง ${fmt(dur)}` + (hiddenTotal > 1 ? ` · ระหว่างนั้นจอปิดหรือสลับแอป ${fmt(hiddenTotal)} แต่ยังอัดต่อได้` : ''));
+  else setResult(lost > 5 ? 'bad' : 'warn', `เสียงหายไปประมาณ ${fmt(lost)}`, `เวลาจริง ${fmt(wallSec)} · ได้เสียง ${fmt(dur)}` + (hiddenTotal > 1 ? ` · จอปิดหรือสลับแอปรวม ${fmt(hiddenTotal)}` : '') + (muteTotal > 1 ? ` · ไมค์ถูกระบบปิด ${fmt(muteTotal)}` : ''));
+  setAudio(blob, type, 'บันทึกในเว็บ');
+}
+
+function mediaDuration(blob){
+  return new Promise(res => {
+    const a = new Audio(); a.preload = 'metadata';
+    const url = URL.createObjectURL(blob); let done = false;
+    const fin = v => { if (done) return; done = true; URL.revokeObjectURL(url); res(isFinite(v) ? v : 0); };
+    a.onloadedmetadata = () => {
+      if (isFinite(a.duration) && a.duration > 0) return fin(a.duration);
+      a.ontimeupdate = () => { a.ontimeupdate = null; fin(a.duration); };
+      a.currentTime = 1e7;
+    };
+    a.onerror = () => fin(0);
+    setTimeout(() => fin(a.duration), 8000);
+    a.src = url;
+  });
+}
+function setResult(kind, title, detail){ $('recResult').innerHTML = `<div class="res ${kind}"><b>${esc(title)}</b>${esc(detail || '')}</div>`; }
+
+$('fileIn').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  const dur = await mediaDuration(f);
+  log('file chosen', {type: f.type || '(none)', name: f.name.replace(/.*\./, '*.'), bytes: f.size, dur: +dur.toFixed(1)});
+  setAudio(f, f.type, 'ไฟล์ ' + f.name, dur);
+};
+
+function setAudio(blob, type, label, dur){
+  audioBlob = blob; audioMime = apiMime(type, label); audioName = label;
+  $('player').src = URL.createObjectURL(blob); $('player').hidden = false;
+  $('srcInfo').textContent = `พร้อมถอดเสียง: ${label} · ${(blob.size / 1048576).toFixed(1)} MB` + (dur ? ` · ${fmt(dur)}` : '');
+  $('trBtn').disabled = false;
+  if (dur > 30 * 60) $('srcInfo').textContent += ' · ⚠️ ยาวเกิน 30 นาที ระบบจะถอดได้แค่ 30 นาทีแรก (เครื่องมือเต็มจะตัดแบ่งให้)';
+}
+function apiMime(t, name){
+  t = (t || '').toLowerCase(); name = (name || '').toLowerCase();
+  if (t.includes('webm')) return 'audio/webm';
+  if (t.includes('ogg')) return 'audio/ogg';
+  if (t.includes('mp4') || t.includes('m4a') || name.endsWith('.m4a')) return 'audio/m4a';
+  if (t.includes('aac')) return 'audio/aac';
+  if (t.includes('mpeg') || t.includes('mp3') || name.endsWith('.mp3')) return 'audio/mp3';
+  if (t.includes('wav') || name.endsWith('.wav')) return 'audio/wav';
+  if (t.includes('flac')) return 'audio/flac';
+  return 'audio/m4a';
+}
+
+/* ---------- Gemini calls ---------- */
+const b64 = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(blob); });
+
+async function uploadFile(blob, mime){
+  const start = await fetch(API + '/upload/v1beta/files', {method: 'POST', headers: {
+    'x-goog-api-key': key(), 'X-Goog-Upload-Protocol': 'resumable', 'X-Goog-Upload-Command': 'start',
+    'X-Goog-Upload-Header-Content-Length': String(blob.size), 'X-Goog-Upload-Header-Content-Type': mime, 'Content-Type': 'application/json'},
+    body: JSON.stringify({file: {display_name: 'meeting-test'}})});
+  const url = start.headers.get('x-goog-upload-url');
+  log('upload start', start.status, 'upload-url readable:', !!url);
+  if (!url) throw new Error('เบราว์เซอร์อ่านลิงก์อัปโหลดไม่ได้ (' + start.status + ')');
+  const up = await fetch(url, {method: 'POST', headers: {'X-Goog-Upload-Offset': '0', 'X-Goog-Upload-Command': 'upload, finalize'}, body: blob});
+  const j = await up.json();
+  log('upload done', up.status, j.file && j.file.state);
+  if (!up.ok) throw new Error((j.error && j.error.message) || up.status);
+  let file = j.file;
+  for (let i = 0; i < 60 && file.state === 'PROCESSING'; i++) {
+    await new Promise(r => setTimeout(r, 2000));
+    file = await (await fetch(API + '/v1beta/' + file.name, {headers: {'x-goog-api-key': key()}})).json();
+  }
+  return file.uri;
+}
+
+async function interact(body){
+  let r = await fetch(API + '/v1beta/interactions', {method: 'POST', headers: {'x-goog-api-key': key(), 'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  let j = await r.json().catch(() => ({}));
+  if (!r.ok && body.store === false && /store/i.test(JSON.stringify(j))) {
+    log('store:false rejected, retrying without'); delete body.store;
+    r = await fetch(API + '/v1beta/interactions', {method: 'POST', headers: {'x-goog-api-key': key(), 'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+    j = await r.json().catch(() => ({}));
+  }
+  if (!r.ok) throw new Error((j.error && j.error.message) || ('HTTP ' + r.status));
+  for (let i = 0; i < 150 && j.status === 'in_progress' && j.id; i++) {
+    await new Promise(res => setTimeout(res, 2000));
+    j = await (await fetch(API + '/v1beta/interactions/' + j.id, {headers: {'x-goog-api-key': key()}})).json();
+  }
+  if (j.status && j.status !== 'completed') log('interaction status', j.status, j.errors || '');
+  if (j.errors && j.errors.length) throw new Error(j.errors.map(e => e.message).join('; '));
+  return j;
+}
+function outContent(j){
+  const out = [];
+  (j.steps || []).forEach(s => (s.content || []).forEach(c => { if (c.type === 'text') out.push(c); }));
+  return out;
+}
+
+/* ---------- transcribe ---------- */
+let transcript = '';
+$('trBtn').onclick = async () => {
+  if (!key()) { $('trMsg').textContent = 'ใส่คีย์ก่อน'; return; }
+  if (!audioBlob) return;
+  $('trBtn').disabled = true; $('trOut').innerHTML = ''; $('sumBtn').disabled = true;
+  $('trMsg').innerHTML = '<span class="spin"></span>กำลังถอดเสียง...';
+  const t = performance.now();
+  try {
+    let input;
+    if (audioBlob.size < 14 * 1048576) {
+      input = {type: 'audio', data: await b64(audioBlob), mime_type: audioMime};
+      log('sending inline', audioMime, audioBlob.size);
+    } else {
+      $('trMsg').innerHTML = '<span class="spin"></span>กำลังอัปโหลดไฟล์...';
+      input = {type: 'audio', uri: await uploadFile(audioBlob, audioMime), mime_type: audioMime};
+      $('trMsg').innerHTML = '<span class="spin"></span>กำลังถอดเสียง...';
+    }
+    const mode = {type: 'verbatim'};
+    if ($('diar').checked) mode.diarization_mode = 'speaker';
+    const tc = {mode};
+    if ($('thai').checked) tc.language_codes = ['th-TH', 'en-US'];
+    const j = await interact({model: TR_MODEL, input: [input], generation_config: {transcription_config: tc}, store: false});
+    const secs = ((performance.now() - t) / 1000).toFixed(1);
+    const content = outContent(j);
+    const text = content.map(c => c.text).join('\n').trim();
+    const words = content.flatMap(c => (c.annotations || []).filter(a => a.type === 'word_info').map(a => ({...a, _src: c.text})));
+    const speakers = [...new Set(words.map(w => w.speaker).filter(Boolean))];
+    log('transcribed', {secs: +secs, chars: text.length, words: words.length, speakers: speakers.length, keys: Object.keys(j), sampleAnno: words[0] ? Object.keys(words[0]).filter(k => k !== '_src') : null});
+    if (!text) { $('trMsg').textContent = '⚠️ ไม่ได้ข้อความกลับมา ดูบันทึกทางเทคนิค'; log('raw', JSON.stringify(j).slice(0, 1500)); return; }
+    $('trMsg').textContent = `✅ เสร็จใน ${secs} วินาที` + (speakers.length ? ` · พบ ${speakers.length} คน` : '');
+    transcript = render(text, words, speakers);
+    $('rateBox').hidden = false; $('sumBtn').disabled = false;
+  } catch (e) {
+    log('transcribe error', String(e.message || e));
+    $('trMsg').textContent = '❌ ' + (e.message || e);
+  } finally { $('trBtn').disabled = false; }
+};
+
+function render(text, words, speakers){
+  if (!words.length || !speakers.length) { $('trOut').innerHTML = `<div class="plain">${esc(text)}</div>`; return text; }
+  const idx = s => speakers.indexOf(s) + 1;
+  const segs = [];
+  words.forEach(w => {
+    const last = segs[segs.length - 1];
+    if (last && last.spk === w.speaker) last.words.push(w); else segs.push({spk: w.speaker, words: [w]});
+  });
+  const lines = segs.map(s => {
+    const a = s.words[0], b = s.words[s.words.length - 1];
+    let t = (Number.isInteger(a.start_index) && Number.isInteger(b.end_index)) ? a._src.slice(a.start_index, b.end_index)
+      : s.words.map(w => w.text).join(/[฀-๿]/.test(s.words[0].text || '') ? '' : ' ');
+    return {n: idx(s.spk), t: t.trim()};
+  });
+  $('trOut').innerHTML = '<div class="tr">' + lines.map(l => `<div class="seg"><span class="spk s${l.n > 5 ? 0 : l.n}">คนที่ ${l.n}</span><p>${esc(l.t)}</p></div>`).join('') + '</div>';
+  return lines.map(l => `คนที่ ${l.n}: ${l.t}`).join('\n');
+}
+
+document.querySelectorAll('.rate').forEach(g => g.addEventListener('click', e => {
+  if (e.target.tagName !== 'BUTTON') return;
+  g.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === e.target));
+  ratings[g.dataset.k] = e.target.textContent; log('rating', g.dataset.k, e.target.textContent);
+}));
+
+/* ---------- summary ---------- */
+$('sumBtn').onclick = async () => {
+  if (!transcript) return;
+  $('sumBtn').disabled = true; $('sumOut').innerHTML = '';
+  $('sumMsg').innerHTML = '<span class="spin"></span>กำลังสรุป...';
+  const prompt = `สรุปการประชุมต่อไปนี้เป็นภาษาไทย กระชับ อ่านง่าย ใช้ Markdown ตามหัวข้อนี้เท่านั้น:
+## ภาพรวม (2-3 ประโยค)
+## ประเด็นที่คุย (bullet)
+## สิ่งที่ตกลงกัน (bullet)
+## สิ่งที่ต้องทำต่อ (bullet: งาน — ใครทำ — กำหนดส่ง ถ้ามีในบทสนทนา ถ้าไม่มีให้เขียนว่า "ไม่ระบุ")
+ห้ามแต่งข้อมูลที่ไม่มีในบทสนทนา
+
+บทสนทนา:
+${transcript}`;
+  const t = performance.now();
+  try {
+    const j = await interact({model: SUM_MODEL, input: [{type: 'text', text: prompt}], store: false});
+    const text = outContent(j).map(c => c.text).join('\n').trim();
+    log('summary', {secs: +((performance.now() - t) / 1000).toFixed(1), chars: text.length});
+    $('sumMsg').textContent = '✅ เสร็จแล้ว';
+    $('sumOut').innerHTML = md(text);
+  } catch (e) { log('summary error', String(e.message || e)); $('sumMsg').textContent = '❌ ' + (e.message || e); }
+  finally { $('sumBtn').disabled = false; }
+};
+function md(s){
+  let h = '', inList = false;
+  s.split('\n').forEach(line => {
+    const l = esc(line.trim()).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+    if (/^[-*•]\s+/.test(l)) { if (!inList) { h += '<ul>'; inList = true; } h += '<li>' + l.replace(/^[-*•]\s+/, '') + '</li>'; return; }
+    if (inList) { h += '</ul>'; inList = false; }
+    if (/^#{1,4}\s/.test(l)) h += '<h3>' + l.replace(/^#+\s/, '') + '</h3>';
+    else if (l) h += '<p>' + l + '</p>';
+  });
+  return h + (inList ? '</ul>' : '');
+}
+
+/* ---------- copy report ---------- */
+$('copyLog').onclick = async () => {
+  const txt = ['ผลทดสอบเครื่องอัด', 'ความแม่น: ' + (ratings.acc || '-'), 'แยกคนพูด: ' + (ratings.spk || '-'), $('recResult').innerText.replace(/\n/g, ' '), '---', ...logs].join('\n');
+  try { await navigator.clipboard.writeText(txt); $('copyLog').textContent = '✅ คัดลอกแล้ว ไปวางในแชทได้เลย'; }
+  catch { const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); $('copyLog').textContent = '✅ คัดลอกแล้ว'; }
+  setTimeout(() => $('copyLog').textContent = 'คัดลอกผลทดสอบ', 3000);
+};
+</script>
+</body>
+</html>
