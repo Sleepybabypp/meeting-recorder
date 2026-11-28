@@ -1,682 +1,206 @@
 <!doctype html>
-<html lang="th" data-theme="light">
+<html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>เครื่องอัดสรุปประชุม</title>
+<meta name="theme-color" content="#F1F4F2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="สรุปประชุม">
+<title>สรุปประชุม</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Trirong:wght@600;700&family=Pridi:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#FFF6F3;--card:#fff;--ink:#2B1420;--ink2:#6B4A57;--ink3:#A08592;--line:#F3E1E6;--accent:#D6336C;--soft:#FDE6EE;
-  --good:#169C68;--goodbg:#E2F4EA;--warn:#C77A08;--warnbg:#FCF1D6;--bad:#D9304F;--badbg:#FDE7E4;
-  --display:"Trirong",Georgia,serif;--body:"Pridi","Leelawadee UI",system-ui,sans-serif}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 15.5px/1.6 var(--body);-webkit-text-size-adjust:100%}
-main{max-width:640px;margin:0 auto;padding:18px 16px calc(40px + env(safe-area-inset-bottom))}
-h1{font:700 27px/1.25 var(--display);margin:6px 0 4px}
-.sub{color:var(--ink2);margin:0 0 16px;font-size:14.5px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;margin:0 0 14px;box-shadow:0 12px 26px -22px rgba(214,51,108,.5)}
-.card h2{font:700 18px/1.3 var(--display);margin:0 0 4px;display:flex;align-items:center;gap:10px}
-.card h2 .n{display:grid;place-items:center;width:28px;height:28px;border-radius:10px;background:var(--soft);color:var(--accent);font:700 14px var(--body)}
-.hint{color:var(--ink2);font-size:13.5px;margin:0 0 12px}
-label.f{display:block;font-size:13.5px;color:var(--ink2);margin:8px 0 4px}
-input[type=password],input[type=text],select,textarea{width:100%;font:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px}
-input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid rgba(214,51,108,.25);border-color:var(--accent)}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-button{font:600 15px var(--body);border:0;border-radius:14px;padding:11px 16px;cursor:pointer;background:var(--soft);color:var(--accent)}
-button.pri{background:linear-gradient(135deg,#D93A70,#F2836F);color:#fff;box-shadow:0 10px 18px -12px rgba(217,58,112,.8)}
-button:disabled{opacity:.45;cursor:not-allowed}
-.rec{width:100%;padding:16px;font-size:17px}
-.rec.on{background:linear-gradient(135deg,#D9304F,#F0605E)}
-.timer{font:700 44px/1 var(--display);text-align:center;margin:12px 0 4px;letter-spacing:.02em}
-.status{text-align:center;color:var(--ink2);font-size:13.5px;min-height:1.6em}
-.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ink3);margin-right:6px;vertical-align:1px}
-.dot.live{background:var(--bad);animation:bl 1s infinite}
-@keyframes bl{50%{opacity:.25}}
-.check{display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--ink2);margin:10px 0 0}
-.check input{margin-top:5px;accent-color:var(--accent)}
-.res{border-radius:16px;padding:12px 14px;margin-top:12px;font-size:14.5px}
-.res.good{background:var(--goodbg);color:#0F6B47}.res.warn{background:var(--warnbg);color:#7A4A05}.res.bad{background:var(--badbg);color:#9B1C33}
-.res b{display:block;font-size:15.5px;margin-bottom:2px}
-audio{width:100%;margin-top:10px}
-.or{display:flex;align-items:center;gap:10px;color:var(--ink3);font-size:13px;margin:14px 0}
-.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
-.file{display:block;border:1.5px dashed #F2C4D2;border-radius:16px;padding:14px;text-align:center;color:var(--ink2);font-size:14px;cursor:pointer}
-.file input{display:none}
-.src{font-size:13.5px;color:var(--ink2);margin-top:8px}
-.tr{margin-top:12px;display:flex;flex-direction:column;gap:8px}
-.seg{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start}
-.spk{font:600 12.5px var(--body);padding:3px 9px;border-radius:999px;white-space:nowrap;margin-top:2px}
-.seg p{margin:0}
-.spk.s1{background:#FDE6EE;color:#B0204F}.spk.s2{background:#E3EEFF;color:#2453A6}.spk.s3{background:#E2F4EA;color:#0F6B47}
-.spk.s4{background:#FFF0D6;color:#8A5A00}.spk.s5{background:#EEE6FF;color:#5B3BB0}.spk.s0{background:#EEE;color:#555}
-.plain{white-space:pre-wrap;background:#FFF9F7;border-radius:14px;padding:12px;margin-top:12px;font-size:14.5px}
-.rate{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.rate button{padding:8px 12px;font-size:14px}
-.rate button.on{background:var(--accent);color:#fff}
-.sum{margin-top:12px;font-size:14.5px}
-.sum h3{font:700 16px var(--display);margin:12px 0 4px}
-.sum ul{margin:4px 0;padding-left:20px}
-.sum h4{font:600 15px var(--body);margin:10px 0 2px;color:var(--accent)}
-.tw{overflow-x:auto;margin:6px 0}
-.sum table{border-collapse:collapse;font-size:13.5px;min-width:100%}
-.sum th,.sum td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
-.sum th{background:var(--soft)}
-.nm{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;margin:0 0 10px}
-.nm small{grid-column:2;color:var(--ink3);font-size:12.5px;line-height:1.4}
-.nm input{padding:8px 10px}
-details{margin-top:4px}
-summary{cursor:pointer;color:var(--ink2);font-size:14px}
-#log{white-space:pre-wrap;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;background:#2B1420;color:#FCE9EF;border-radius:14px;padding:12px;max-height:320px;overflow:auto;margin-top:10px}
-.spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:6px}
-@keyframes sp{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.dot.live,.spin{animation:none}}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css?v=17">
 </head>
 <body>
+<header class="top">
+  <button class="back" id="back" hidden aria-label="กลับไปรายการประชุม"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 id="title">อัดเสียง</h1>
+  <button class="del" id="delMeet" hidden aria-label="ลบประชุมนี้"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+</header>
+
 <main>
-  <h1>เครื่องอัดสรุปประชุม</h1>
-  <p class="sub">อัดเสียงประชุม ถอดเป็นข้อความไทย แยกคนพูด แล้วสรุปให้ ยังเป็นรุ่นทดลอง ใช้เสร็จแล้วกดคัดลอกผลทดสอบส่งกลับมา</p>
-
-  <section class="card">
-    <h2><span class="n">0</span>ใส่คีย์ Gemini</h2>
-    <p class="hint">ขอคีย์ฟรีได้ที่ aistudio.google.com คีย์จะเก็บไว้ในเครื่องนี้เท่านั้น ไม่ถูกส่งไปที่อื่นนอกจาก Google</p>
-    <input type="password" id="key" placeholder="วางคีย์ที่ขึ้นต้นด้วย AIza..." autocomplete="off" spellcheck="false">
-    <div class="row" style="margin-top:8px">
-      <button id="saveKey">บันทึกคีย์</button>
-      <button id="testKey">ทดสอบคีย์</button>
-      <span id="keyMsg" class="hint" style="margin:0"></span>
+  <!-- record -->
+  <section id="v-rec">
+    <div class="res warn" id="noKey" hidden><b>ยังไม่ได้ใส่คีย์ Gemini</b>อัดเสียงได้เลย แต่จะถอดเสียงและสรุปไม่ได้จนกว่าจะใส่คีย์ <button class="ghost" id="goSet" style="padding:4px 0;min-height:0;background:none;color:inherit;text-decoration:underline">ไปหน้าตั้งค่า</button></div>
+    <div class="res warn" id="recover" hidden><b id="recoverMsg"></b><div class="row" style="margin-top:8px"><button id="recoverBtn">กู้เสียงนี้</button><button class="ghost" id="discardBtn">ลบทิ้ง</button></div></div>
+    <div class="stage">
+      <div class="timer" id="timer">00:00</div>
+      <div class="status" id="recStatus"><span class="dot" id="dot"></span><span id="recText">แตะเพื่อเริ่มอัด</span></div>
+      <div class="recwrap"><button class="recbtn" id="recBtn" aria-label="เริ่มอัด"><i></i></button></div>
+      <button class="pinbtn" id="pinBtn" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14.5 2.5l7 7-2.2.6-3.8 3.8.4 4.6-1.6 1.6-4.2-4.2L4.5 21.5l-1-1 5.6-5.6-4.2-4.2 1.6-1.6 4.6.4 3.8-3.8z"/></svg>ปักหมุดตรงนี้</button>
+      <p class="msg pinmsg" id="pinMsg"></p>
     </div>
-  </section>
-
-  <section class="card">
-    <h2><span class="n">1</span>อัดเสียง</h2>
-    <p class="hint">อัดยาวเป็นชั่วโมงได้ ระบบแบ่งเป็นช่วงละ 20 นาทีให้เอง ถ้าประชุมนาน เสียบสายชาร์จไว้ เปิดหน้านี้ค้างไว้และอย่าสลับไปแอปอื่น ถ้าหน้าเว็บปิดไปกลางทาง เปิดกลับมาจะกู้เสียงที่อัดไว้ได้</p>
-    <div class="res warn" id="recover" hidden><b id="recoverMsg"></b><div class="row" style="margin-top:8px"><button id="recoverBtn">กู้เสียงนี้</button><button id="discardBtn">ลบทิ้ง</button></div></div>
-    <button class="pri rec" id="recBtn">● เริ่มอัด</button>
-    <div class="timer" id="timer">00:00</div>
-    <div class="status" id="recStatus"><span class="dot" id="dot"></span>ยังไม่ได้อัด</div>
-    <label class="check"><input type="checkbox" id="wake" checked> กันจอดับระหว่างอัด (Wake Lock)</label>
     <div id="recResult"></div>
-    <div id="players"></div>
-
+    <div class="predocs">
+      <label class="addoc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.5l-8.6 8.6a5 5 0 0 1-7.1-7.1l9.2-9.2a3.3 3.3 0 0 1 4.7 4.7l-9.2 9.2a1.7 1.7 0 0 1-2.4-2.4l8.5-8.5"/></svg><span><b>แนบเอกสารก่อนอัด</b><small id="preHint">สไลด์ วาระประชุม หรือ PDF ให้ AI อ่านประกอบตอนสรุป</small></span><input type="file" id="preIn" accept="image/*,application/pdf" multiple></label>
+      <div class="docs" id="preList"></div>
+      <span class="msg" id="preMsg"></span>
+    </div>
+    <label class="check"><input type="checkbox" id="wake" checked> กันจอดับระหว่างอัด (ประชุมยาวให้เสียบสายชาร์จ และเปิดแอปค้างไว้)</label>
     <div class="or">หรือ</div>
-    <label class="file">📁 เลือกไฟล์เสียง เช่นไฟล์จากแอปบันทึกเสียงของ iPhone (.m4a)
+    <label class="file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>เลือกไฟล์เสียงจากเครื่อง
       <input type="file" id="fileIn" accept="audio/*,.m4a,.mp3,.wav,.aac,.webm,.ogg">
     </label>
-    <div class="src" id="srcInfo"></div>
   </section>
 
-  <section class="card">
-    <h2><span class="n">2</span>ถอดเสียงไทย + แยกคนพูด</h2>
-    <p class="hint">ใช้ Gemini 3.5 Transcribe แยกได้สูงสุด 8 คน เสียงที่อัดยาวจะถอดทีละช่วงแล้วต่อกันให้ ประชุม 1 ชั่วโมงใช้เวลาถอดหลายนาที</p>
-    <label class="check"><input type="checkbox" id="diar" checked> แยกคนพูด</label>
-    <label class="check"><input type="checkbox" id="thai" checked> ระบุภาษาไทย + อังกฤษ (ถ้าไม่ติ๊ก ให้ระบบเดาภาษาเอง)</label>
-    <div class="row" style="margin-top:12px"><button class="pri" id="trBtn" disabled>ถอดเสียง</button><span id="trMsg" class="hint" style="margin:0"></span></div>
-    <div id="names" hidden>
-      <p class="hint" style="margin:14px 0 6px">ใส่ชื่อแต่ละคน ดูจากประโยคแรกที่คนนั้นพูด ถ้าใส่ชื่อเดียวกันให้ 2 คน ระบบจะรวมเป็นคนเดียว</p>
-      <div id="nameList"></div>
-      <div class="row" style="margin-top:8px"><button id="guessBtn">ให้ AI เดาชื่อจากบทสนทนา</button><span id="guessMsg" class="hint" style="margin:0"></span></div>
+  <!-- meeting list -->
+  <section id="v-list" hidden>
+    <div class="week" id="week" hidden><div style="flex:1;min-width:0"><small>สัปดาห์นี้</small><b id="weekTxt"></b></div><button id="weekTasks"><b id="weekN">0</b>งานค้าง</button></div>
+    <div class="mlist" id="mlist"></div>
+  </section>
+
+  <!-- meeting detail -->
+  <section id="v-meet" hidden>
+    <textarea class="mtitle" id="mTitle" rows="1" enterkeyhint="done" aria-label="ชื่อประชุม"></textarea>
+    <p class="mmeta" id="mMeta"></p>
+    <div id="mAudio"></div>
+    <p class="mpins" id="mPins"></p>
+    <div class="docs">
+      <div class="docl" id="docList"></div>
+      <label class="addoc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.5l-8.6 8.6a5 5 0 0 1-7.1-7.1l9.2-9.2a3.3 3.3 0 0 1 4.7 4.7l-9.2 9.2a1.7 1.7 0 0 1-2.4-2.4l8.5-8.5"/></svg><span><b>แนบเอกสารเพิ่ม</b><small>สไลด์ รูปไวท์บอร์ด หรือ PDF ให้ AI อ่านด้วย</small></span><input type="file" id="docIn" accept="image/*,application/pdf" multiple></label>
+      <span class="msg" id="docMsg"></span>
     </div>
-    <div id="trOut"></div>
-    <div id="rateBox" hidden>
-      <p class="hint" style="margin:12px 0 0">ถอดแม่นแค่ไหน</p>
-      <div class="rate" data-k="acc"><button>แม่นมาก</button><button>พอใช้</button><button>ผิดเยอะ</button></div>
-      <p class="hint" style="margin:10px 0 0">แยกคนพูดถูกไหม</p>
-      <div class="rate" data-k="spk"><button>ถูกหมด</button><button>ถูกบางส่วน</button><button>ผิด</button><button>ไม่ได้ทดสอบ</button></div>
+    <div class="seg3" role="tablist">
+      <button class="on" data-pane="p-tr" role="tab">บทสนทนา</button>
+      <button data-pane="p-sum" role="tab">สรุป</button>
+      <button data-pane="p-ask" role="tab">ถาม AI</button>
+    </div>
+
+    <div id="p-tr">
+      <div id="trSetup">
+        <label class="check"><input type="checkbox" id="diar" checked> แยกคนพูด</label>
+        <label class="check"><input type="checkbox" id="thai" checked> ภาษาไทย + อังกฤษ (ไม่ติ๊ก = ให้ระบบเดาภาษาเอง)</label>
+        <div class="row" style="margin-top:12px"><button class="pri" id="trBtn">ถอดเสียง</button><span id="trMsg" class="msg"></span></div>
+      </div>
+      <details class="namebox" id="names" hidden>
+        <summary id="namesSum">ตั้งชื่อคนพูด</summary>
+        <p class="hint" style="margin:0 0 8px">ดูจากประโยคแรกที่คนนั้นพูด ใส่ชื่อเดียวกันให้ 2 คนจะรวมเป็นคนเดียว</p>
+        <div id="nameList"></div>
+        <div class="row" style="margin-top:4px"><button id="guessBtn">ให้ AI เดาชื่อ</button><span id="guessMsg" class="msg"></span></div>
+      </details>
+      <details class="namebox" id="stats" hidden><summary>ใครพูดเท่าไหร่</summary><div id="statsBody"></div></details>
+      <div id="trOut"></div>
+      <div class="row" id="trTools" hidden style="margin-top:12px"><button id="copyTr">คัดลอกบทสนทนา</button><span class="lang"><select id="trLang" aria-label="ภาษา"><option value="en">อังกฤษ</option><option value="zh">จีน</option></select><button id="trTr">แปล</button></span><button class="ghost" id="redoTr">ถอดใหม่</button></div>
+      <div id="trTrOut" class="sum"></div>
+    </div>
+
+    <div id="p-sum" hidden>
+      <label class="f" for="tpl">แบบสรุป</label>
+      <select id="tpl"><option value="meeting">รายงานประชุมละเอียด</option><option value="plan">แผนงาน</option><option value="short">สั้น อ่านจบใน 1 นาที</option><option value="todo">รายการสิ่งที่ต้องทำ</option><option value="next">วาระประชุมครั้งหน้า</option></select>
+      <div class="row" style="margin-top:10px"><button class="pri" id="sumBtn">สรุป</button><button id="copySum" hidden>คัดลอกสรุป</button><span id="sumMsg" class="msg"></span></div>
+      <div id="sumOut" class="sum"></div>
+      <div class="row tools" id="sumTools" hidden><button id="shareSum">แชร์</button><button id="pdfSum">บันทึกเป็น PDF</button><span class="lang"><select id="sumLang" aria-label="ภาษา"><option value="en">อังกฤษ</option><option value="zh">จีน</option></select><button id="trSum">แปล</button></span></div>
+      <div id="sumTrOut" class="sum"></div>
+    </div>
+
+    <div id="p-ask" hidden>
+      <div class="chips" id="chips"></div>
+      <div class="chat" id="chat"></div>
+      <div class="askbar">
+        <button class="mic" id="askMic" aria-label="ถามด้วยเสียง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        <textarea id="askIn" rows="1" enterkeyhint="send" placeholder="ถามอะไรก็ได้เกี่ยวกับประชุมนี้" aria-label="คำถาม"></textarea>
+        <button class="pri" id="askBtn">ส่ง</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- assistant -->
+  <section id="v-ai" hidden>
+    <div class="seg3" role="tablist"><button class="on" data-ai="a-ask" role="tab">ถามทุกประชุม</button><button data-ai="a-tasks" role="tab">งานทั้งหมด</button></div>
+    <div id="a-ask">
+      <div class="chips" id="aChips"></div>
+      <div class="chat" id="aChat"></div>
+      <div class="askbar">
+        <button class="mic" id="aMic" aria-label="ถามด้วยเสียง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        <textarea id="aIn" rows="1" enterkeyhint="send" placeholder="ถามข้ามทุกประชุม" aria-label="คำถาม"></textarea>
+        <button class="pri" id="aBtn">ส่ง</button>
+      </div>
+      <div class="row" style="justify-content:center;margin-top:10px"><button class="ghost" id="aClear" hidden>ล้างแชท</button></div>
+    </div>
+    <div id="a-tasks" hidden>
+      <div class="row"><button class="pri" id="taskSync" hidden></button><span class="msg" id="taskMsg"></span></div>
+      <label class="check"><input type="checkbox" id="showDone"> แสดงงานที่เสร็จแล้ว</label>
+      <div id="taskList"></div>
     </div>
   </section>
 
-  <section class="card">
-    <h2><span class="n">3</span>สรุป</h2>
-    <p class="hint">ใส่ชื่อคนก่อนสรุป สรุปจะได้เรียกชื่อถูก ใช้ Gemini Flash ถ้าโควตาฟรีหมดจะสลับไปใช้ Flash-Lite ให้เอง</p>
-    <label class="f" for="tpl">แบบสรุป</label>
-    <select id="tpl"><option value="meeting">รายงานประชุมละเอียด</option><option value="plan">แผนงาน</option><option value="short">สั้น อ่านจบใน 1 นาที</option></select>
-    <div class="row" style="margin-top:10px"><button class="pri" id="sumBtn" disabled>สรุป</button><button id="copySum">คัดลอกสรุป</button><span id="sumMsg" class="hint" style="margin:0"></span></div>
-    <div id="sumOut" class="sum"></div>
-  </section>
-
-  <section class="card">
-    <h2><span class="n">✓</span>ส่งผลทดสอบกลับมา</h2>
-    <p class="hint">กดคัดลอก แล้ววางส่งในแชท ข้อมูลนี้ไม่มีคีย์และไม่มีข้อความที่ถอดได้</p>
-    <button class="pri" id="copyLog" style="width:100%">คัดลอกผลทดสอบ</button>
-    <details><summary>ดูบันทึกทางเทคนิค</summary><div id="log"></div></details>
+  <!-- settings -->
+  <section id="v-set" hidden>
+    <div class="card" id="keyCard">
+      <h2 id="keyTitle">คีย์ Gemini</h2>
+      <p class="hint" id="keyHint">ขอคีย์ฟรีได้ที่ aistudio.google.com คีย์เก็บไว้ในเครื่องนี้เท่านั้น ส่งไปแค่ที่ Google</p>
+      <input type="password" id="key" autocapitalize="none" autocorrect="off" placeholder="วางคีย์ที่ขึ้นต้นด้วย AIza..." autocomplete="off" spellcheck="false">
+      <div class="row" style="margin-top:8px"><button class="pri" id="saveKey">บันทึก</button><button id="testKey">ทดสอบคีย์</button><span id="keyMsg" class="msg"></span></div>
+    </div>
+    <div class="card">
+      <h2>ความจำทีม</h2>
+      <p class="hint">หลังสรุปประชุมแต่ละครั้ง AI จะจดว่าใครดูแลงานอะไร โปรเจกต์ไหนถึงไหน และตกลงอะไรไว้ ครั้งหน้า AI จะอ่านก่อนสรุปและตอบคำถาม แก้หรือลบบรรทัดที่ผิดได้เลย</p>
+      <textarea id="mem" rows="8" placeholder="ยังว่างอยู่"></textarea>
+      <p class="msg" id="memAt" style="margin:6px 0 0"></p>
+      <label class="check"><input type="checkbox" id="memAuto" checked> จดอัตโนมัติหลังสรุปทุกครั้ง</label>
+      <div class="row" style="margin-top:4px"><button class="pri" id="saveMem">บันทึก</button><button class="ghost" id="clearMem">ล้างความจำ</button><span id="memMsg" class="msg"></span></div>
+    </div>
+    <div class="card">
+      <h2>ชื่อคนที่จำไว้</h2>
+      <p class="hint">ชื่อที่เคยตั้งให้คนพูด จะขึ้นให้เลือกในประชุมถัดไป และ AI จะสะกดตามนี้</p>
+      <div class="docs" id="peopleList"></div>
+    </div>
+    <div class="card">
+      <h2>คำเฉพาะของทีม</h2>
+      <p class="hint">ชื่อคน ชื่อสินค้า ชื่อแคมเปญ ที่ AI มักถอดผิด ใส่บรรทัดละคำ AI จะสะกดตามนี้ตอนสรุปและตอบคำถาม</p>
+      <textarea id="gloss" rows="4" placeholder="เช่น&#10;พี่นุ่น&#10;ลิปทินต์รุ่นใหม่&#10;แคมเปญ 12.12"></textarea>
+      <div class="row" style="margin-top:8px"><button class="pri" id="saveGloss">บันทึก</button><span id="glossMsg" class="msg"></span></div>
+    </div>
+    <div class="card" id="installCard">
+      <h2>ติดตั้งเป็นแอป</h2>
+      <p class="hint" style="margin-bottom:4px">บน iPhone เปิดหน้านี้ใน Safari แล้ว:</p>
+      <ol class="steps"><li>แตะปุ่มแชร์ (สี่เหลี่ยมมีลูกศรชี้ขึ้น)</li><li>เลื่อนลงแล้วแตะ "เพิ่มไปยังหน้าจอโฮม"</li><li>แตะ "เพิ่ม" แล้วเปิดจากไอคอน "สรุปประชุม"</li></ol>
+      <p class="hint" style="margin:8px 0 0">บน Android หรือคอม ใช้เมนูของ Chrome แล้วเลือก "ติดตั้งแอป"</p>
+      <button class="pri" id="installBtn" hidden style="margin-top:10px">ติดตั้งแอป</button>
+    </div>
+    <div class="card">
+      <h2>ข้อมูลในเครื่อง</h2>
+      <p class="hint" id="storeInfo">ประชุม เสียง และสรุปทั้งหมดเก็บในเครื่องนี้เท่านั้น ถ้าลบแอปหรือล้างข้อมูลเว็บ ข้อมูลจะหายไปด้วย</p>
+      <p class="hint" style="margin:0">คีย์ฟรีของ Gemini: Google อาจเอาข้อมูลไปพัฒนาระบบ ไม่ควรใช้กับประชุมลับ</p>
+    </div>
+    <div class="card">
+      <h2>ทดสอบความแม่น</h2>
+      <p class="hint">ใช้ประชุมจำลอง 5 คน ยาว 93 วินาที พูดแทรกกัน 10 จุด ที่รู้เฉลยว่าใครพูดอะไร ถอดเสียงจริงแล้วเทียบกับเฉลย ใช้การถอดเสียง 1 ครั้งต่อไฟล์</p>
+      <select id="testFile" aria-label="ไฟล์ทดสอบ"><option value="1-ปกติ.m4a">เสียงปกติ</option><option value="2-เสียงเบา.m4a">เสียงเบา</option><option value="3-เสียงก้อง.m4a">เสียงก้อง</option><option value="4-ยากสุด-เบา+ก้อง+เสียงแอร์.m4a">ยากสุด: เบา ก้อง และมีเสียงแอร์</option></select>
+      <div class="row" style="margin-top:8px"><button class="pri" id="testBtn">เริ่มทดสอบ</button><span id="testMsg" class="msg"></span></div>
+      <div id="testOut"></div>
+      <h2 style="margin-top:22px">ทดสอบความฉลาดของ AI</h2>
+      <p class="hint">ถาม 10 ข้อจากประชุมเดียวกันที่รู้คำตอบอยู่แล้ว มีทั้งตัวเลขที่พูดเป็นคำ คำถามต่อเนื่อง และคำถามกับดักที่ไม่มีในประชุม แล้วให้สรุปอีก 1 ครั้ง เช็กว่าตอบถูก ไม่แต่งเรื่อง และอ้างเวลาตรงจริง ใช้ AI 11 ครั้ง</p>
+      <div class="row"><button class="pri" id="iqBtn">เริ่มทดสอบความฉลาด</button><span id="iqMsg" class="msg"></span></div>
+      <div id="iqOut"></div>
+    </div>
+    <div class="card">
+      <details><summary>บันทึกทางเทคนิค (ไว้ส่งให้ผู้พัฒนาดู ไม่มีคีย์และไม่มีบทสนทนา)</summary>
+        <div class="row" style="margin-top:8px"><button id="copyLog">คัดลอกบันทึก</button></div>
+        <div id="log"></div>
+      </details>
+    </div>
   </section>
 </main>
+<datalist id="people"></datalist>
 
-<script>
-const $ = id => document.getElementById(id);
-const API = 'https://generativelanguage.googleapis.com';
-const TR_MODEL = 'models/gemini-3.5-transcribe';
-const SUM_MODEL = 'models/gemini-3.5-flash-lite';
-const T0 = performance.now();
-const logs = [];
-const ratings = {};
-function log(...a){
-  const t = ((performance.now() - T0) / 1000).toFixed(1).padStart(6);
-  const line = t + 's  ' + a.map(x => typeof x === 'string' ? x : JSON.stringify(x)).join(' ');
-  logs.push(line); $('log').textContent = logs.join('\n'); $('log').scrollTop = 1e9;
-}
-const fmt = s => { s = Math.max(0, Math.round(s)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
-const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+<button class="nowplay" id="nowPlaying" hidden aria-label="หยุดเสียง"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>กำลังเล่น <span>00:00</span> · แตะเพื่อหยุด</button>
 
-/* ---------- environment ---------- */
-log('UA', navigator.userAgent);
-log('standalone(home screen)', !!(navigator.standalone || matchMedia('(display-mode: standalone)').matches));
-log('MediaRecorder', typeof MediaRecorder !== 'undefined', 'wakeLock', 'wakeLock' in navigator);
-const MIMES = ['audio/webm;codecs=opus', 'audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/webm', 'audio/ogg;codecs=opus'];
-if (typeof MediaRecorder !== 'undefined') log('supported mimes', MIMES.filter(m => MediaRecorder.isTypeSupported(m)));
+<nav class="tabs" aria-label="เมนูหลัก">
+  <button data-view="v-rec" class="on" aria-label="อัดเสียง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span>อัดเสียง</span></button>
+  <button data-view="v-list" aria-label="ประชุม"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>ประชุม</span></button>
+  <button data-view="v-ai" aria-label="ผู้ช่วย"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span>ผู้ช่วย</span></button>
+  <button data-view="v-set" aria-label="ตั้งค่า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span>ตั้งค่า</span></button>
+</nav>
 
-/* ---------- key ---------- */
-const KEY_LS = 'chy-rec-key';
-$('key').value = localStorage.getItem(KEY_LS) || '';
-const key = () => $('key').value.trim();
-$('saveKey').onclick = () => { localStorage.setItem(KEY_LS, key()); $('keyMsg').textContent = 'บันทึกแล้ว'; };
-$('testKey').onclick = async () => {
-  $('keyMsg').textContent = 'กำลังทดสอบ...';
-  try {
-    const r = await fetch(API + '/v1beta/models?pageSize=200', {headers: {'x-goog-api-key': key()}});
-    const j = await r.json();
-    if (!r.ok) throw new Error((j.error && j.error.message) || r.status);
-    const names = (j.models || []).map(m => m.name);
-    log('key ok, models:', names.filter(n => /transcribe|flash/.test(n)));
-    const hasTr = names.some(n => n.includes('transcribe'));
-    $('keyMsg').textContent = hasTr ? '✅ ใช้ได้ พบโมเดลถอดเสียง' : '⚠️ คีย์ใช้ได้ แต่ไม่พบโมเดลถอดเสียงในรายการ';
-    localStorage.setItem(KEY_LS, key());
-  } catch (e) { log('key error', String(e.message || e)); $('keyMsg').textContent = '❌ ' + (e.message || e); }
-};
-
-/* ---------- recording (long meetings: overlapping segments) ---------- */
-// A long meeting is recorded as several overlapping files. Each file stays under the
-// 30-minute limit of the transcription model; the overlap lets us line speakers up later.
-const QS = new URLSearchParams(location.search);
-const SEG = Math.max(30, +QS.get('seg') || 20 * 60);           // seconds per segment
-const OV = Math.min(Math.max(3, +QS.get('ov') || 15), SEG / 3); // overlap seconds
-const STEP = SEG - OV;
-let stream, startAt = 0, tick, wakeLock = null, hiddenAt = null, hiddenTotal = 0, muteAt = null, muteTotal = 0;
-let recs = [], segBlobs = [], recMime = '', recording = false, wallSec = 0;
-let segments = [], audioMime = '', audioName = '';
-
-/* chunk backup in IndexedDB, so a crash or reload does not lose a long recording */
-const idb = (() => { let p; return () => p || (p = new Promise((res, rej) => {
-  const o = indexedDB.open('chy-rec', 1);
-  o.onupgradeneeded = () => o.result.createObjectStore('chunks', {autoIncrement: true});
-  o.onsuccess = () => res(o.result); o.onerror = () => rej(o.error);
-})); })();
-async function idbDo(mode, fn){ try { const db = await idb(); return await new Promise((res, rej) => { const tx = db.transaction('chunks', mode); const r = fn(tx.objectStore('chunks')); tx.oncomplete = () => res(r && r.result); tx.onerror = () => rej(tx.error); }); } catch (e) { log('backup error', String(e.message || e)); } }
-const backupPut = rec => idbDo('readwrite', s => s.add(rec));
-const backupClear = () => idbDo('readwrite', s => s.clear());
-const backupAll = () => idbDo('readonly', s => s.getAll());
-
-async function getWake(){
-  if (!$('wake').checked || !('wakeLock' in navigator) || !recording) return;
-  try { wakeLock = await navigator.wakeLock.request('screen'); log('wakeLock acquired'); wakeLock.addEventListener('release', () => log('wakeLock released')); }
-  catch (e) { log('wakeLock error', e.name + ': ' + e.message); }
-}
-document.addEventListener('visibilitychange', () => {
-  log('visibility', document.visibilityState, recording ? 'recording' : '');
-  if (!recording) return;
-  if (document.hidden) hiddenAt = performance.now();
-  else { if (hiddenAt) hiddenTotal += (performance.now() - hiddenAt) / 1000; hiddenAt = null; getWake(); }
-});
-addEventListener('pagehide', () => log('pagehide'));
-addEventListener('pageshow', () => log('pageshow'));
-addEventListener('beforeunload', e => { if (recording) { e.preventDefault(); e.returnValue = ''; } });
-
-function startSegment(idx){
-  const r = new MediaRecorder(stream, recMime ? {mimeType: recMime, audioBitsPerSecond: 32000} : {});
-  const ch = []; let seq = 0;
-  r.idx = idx;
-  r.done = new Promise(res => r.onstop = () => { segBlobs[idx] = new Blob(ch, {type: r.mimeType || recMime || 'audio/webm'}); log('segment stopped', idx, segBlobs[idx].size); res(); });
-  r.ondataavailable = e => { if (e.data && e.data.size) { ch.push(e.data); backupPut({seg: idx, seq: seq++, blob: e.data, type: r.mimeType || recMime}); } };
-  r.onpause = () => log('recorder paused (by system)', idx);
-  r.onerror = e => log('recorder error', idx, String(e.error || e));
-  r.start(1000);
-  log('segment start', idx, r.mimeType || '(default)');
-  recs.push(r);
-  return r;
-}
-
-$('recBtn').onclick = async () => {
-  if (recording) return stopAll();
-  try { stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true, autoGainControl: true}}); }
-  catch (e) { log('mic error', e.name + ': ' + e.message); setResult('bad', 'เปิดไมค์ไม่ได้', e.message); return; }
-  await backupClear();
-  recMime = MIMES.find(m => MediaRecorder.isTypeSupported(m)) || '';
-  recs = []; segBlobs = []; hiddenTotal = 0; muteTotal = 0; hiddenAt = null; muteAt = null;
-  const track = stream.getAudioTracks()[0];
-  track.onmute = () => { muteAt = performance.now(); log('track muted'); };
-  track.onunmute = () => { if (muteAt) muteTotal += (performance.now() - muteAt) / 1000; muteAt = null; log('track unmuted'); };
-  track.onended = () => log('track ended');
-  recording = true; startAt = performance.now();
-  startSegment(0);
-  log('recording started', {seg: SEG, ov: OV});
-  $('recBtn').textContent = '■ หยุดอัด'; $('recBtn').classList.add('on');
-  $('dot').classList.add('live'); $('recStatus').lastChild.textContent = 'กำลังอัด... เปิดหน้านี้ค้างไว้ อย่าสลับแอป';
-  $('recResult').innerHTML = ''; $('players').innerHTML = ''; $('recover').hidden = true;
-  tick = setInterval(onTick, 250);
-  getWake();
-};
-
-function onTick(){
-  const el = (performance.now() - startAt) / 1000;
-  $('timer').textContent = fmt(el);
-  const last = recs[recs.length - 1];
-  if (el >= (last.idx + 1) * STEP) startSegment(last.idx + 1);          // next file starts OV seconds early
-  recs.forEach(r => { if (r.state === 'recording' && r !== recs[recs.length - 1] && el >= r.idx * STEP + SEG) r.stop(); });
-  const n = recs.length;
-  $('recStatus').lastChild.textContent = 'กำลังอัด... ' + (n > 1 ? `ช่วงที่ ${n} · ` : '') + 'เปิดหน้านี้ค้างไว้ อย่าสลับแอป';
-}
-
-async function stopAll(){
-  clearInterval(tick);
-  recording = false;
-  wallSec = (performance.now() - startAt) / 1000;
-  if (muteAt) muteTotal += (performance.now() - muteAt) / 1000;
-  recs.forEach(r => { if (r.state !== 'inactive') r.stop(); });
-  await Promise.all(recs.map(r => r.done));
-  stream.getTracks().forEach(t => t.stop());
-  if (wakeLock) { try { await wakeLock.release(); } catch {} wakeLock = null; }
-  $('recBtn').textContent = '● เริ่มอัดใหม่'; $('recBtn').classList.remove('on');
-  $('dot').classList.remove('live'); $('recStatus').lastChild.textContent = 'หยุดแล้ว';
-  const blobs = segBlobs.filter(b => b && b.size);
-  const durs = [];
-  for (const b of blobs) durs.push(await mediaDuration(b));
-  const dur = durs.reduce((a, b) => a + b, 0) - OV * Math.max(0, blobs.length - 1);
-  const lost = Math.max(0, wallSec - dur);
-  log('stopped', {wall: +wallSec.toFixed(1), audio: +dur.toFixed(1), lost: +lost.toFixed(1), segs: blobs.length, segDur: durs.map(d => +d.toFixed(1)), hidden: +hiddenTotal.toFixed(1), muted: +muteTotal.toFixed(1), bytes: blobs.reduce((a, b) => a + b.size, 0), type: blobs[0] && blobs[0].type});
-  if (lost < 2) setResult('good', 'อัดครบ ไม่มีเสียงหาย', `เวลาจริง ${fmt(wallSec)} · ได้เสียง ${fmt(dur)}` + (blobs.length > 1 ? ` · แบ่งเป็น ${blobs.length} ช่วง` : '') + (hiddenTotal > 1 ? ` · ระหว่างนั้นจอปิดหรือสลับแอป ${fmt(hiddenTotal)} แต่ยังอัดต่อได้` : ''));
-  else setResult(lost > 5 ? 'bad' : 'warn', `เสียงหายไปประมาณ ${fmt(lost)}`, `เวลาจริง ${fmt(wallSec)} · ได้เสียง ${fmt(dur)}` + (hiddenTotal > 1 ? ` · จอปิดหรือสลับแอปรวม ${fmt(hiddenTotal)}` : '') + (muteTotal > 1 ? ` · ไมค์ถูกระบบปิด ${fmt(muteTotal)}` : ''));
-  setSegments(blobs, blobs[0] ? blobs[0].type : recMime, 'บันทึกในเว็บ', dur);
-}
-
-function mediaDuration(blob){
-  return new Promise(res => {
-    const a = new Audio(); a.preload = 'metadata';
-    const url = URL.createObjectURL(blob); let done = false;
-    const fin = v => { if (done) return; done = true; URL.revokeObjectURL(url); res(isFinite(v) ? v : 0); };
-    a.onloadedmetadata = () => {
-      if (isFinite(a.duration) && a.duration > 0) return fin(a.duration);
-      a.ontimeupdate = () => { a.ontimeupdate = null; fin(a.duration); };
-      a.currentTime = 1e7;
-    };
-    a.onerror = () => fin(0);
-    setTimeout(() => fin(a.duration), 8000);
-    a.src = url;
-  });
-}
-function setResult(kind, title, detail){ $('recResult').innerHTML = `<div class="res ${kind}"><b>${esc(title)}</b>${esc(detail || '')}</div>`; }
-
-$('fileIn').onchange = async e => {
-  const f = e.target.files[0]; if (!f) return;
-  const dur = await mediaDuration(f);
-  log('file chosen', {type: f.type || '(none)', name: f.name.replace(/.*\./, '*.'), bytes: f.size, dur: +dur.toFixed(1)});
-  setSegments([f], f.type, 'ไฟล์ ' + f.name, dur);
-  if (dur > 30 * 60) $('srcInfo').textContent += ' · ⚠️ ไฟล์ที่อัปโหลดถอดได้แค่ 30 นาทีแรก ถ้าประชุมยาว ให้อัดในหน้านี้แทน ระบบจะแบ่งช่วงให้เอง';
-};
-
-function setSegments(blobs, type, label, dur){
-  segments = blobs; audioMime = apiMime(type, label); audioName = label;
-  $('players').innerHTML = blobs.map((b, i) => (blobs.length > 1 ? `<div class="src">ช่วงที่ ${i + 1}</div>` : '') + `<audio controls src="${URL.createObjectURL(b)}"></audio>`).join('');
-  const mb = blobs.reduce((a, b) => a + b.size, 0) / 1048576;
-  $('srcInfo').textContent = blobs.length ? `พร้อมถอดเสียง: ${label} · ${mb.toFixed(1)} MB` + (dur ? ` · ${fmt(dur)}` : '') + (blobs.length > 1 ? ` · ${blobs.length} ช่วง` : '') : '';
-  $('trBtn').disabled = !blobs.length;
-}
-
-function apiMime(t, name){
-  t = (t || '').toLowerCase(); name = (name || '').toLowerCase();
-  if (t.includes('webm')) return 'audio/webm';
-  if (t.includes('ogg')) return 'audio/ogg';
-  if (t.includes('mp4') || t.includes('m4a') || name.endsWith('.m4a')) return 'audio/m4a';
-  if (t.includes('aac')) return 'audio/aac';
-  if (t.includes('mpeg') || t.includes('mp3') || name.endsWith('.mp3')) return 'audio/mp3';
-  if (t.includes('wav') || name.endsWith('.wav')) return 'audio/wav';
-  if (t.includes('flac')) return 'audio/flac';
-  return 'audio/m4a';
-}
-
-/* recover a recording that was interrupted (reload, crash, battery) */
-(async () => {
-  const all = await backupAll();
-  if (!all || !all.length) return;
-  const segs = [...new Set(all.map(c => c.seg))].sort((a, b) => a - b);
-  const mins = Math.round(all.filter(c => c.seg === segs[0]).length / 60 + (segs.length - 1) * STEP / 60);
-  $('recover').hidden = false;
-  $('recoverMsg').textContent = `มีเสียงที่อัดไว้ครั้งก่อนในเครื่องนี้ ประมาณ ${mins || 1} นาที`;
-  log('backup found', {chunks: all.length, segs: segs.length});
-  $('recoverBtn').onclick = () => {
-    const blobs = segs.map(s => { const cs = all.filter(c => c.seg === s).sort((a, b) => a.seq - b.seq); return new Blob(cs.map(c => c.blob), {type: cs[0].type || 'audio/webm'}); });
-    setSegments(blobs, blobs[0].type, 'เสียงที่กู้คืน');
-    $('recover').hidden = true; log('backup restored', blobs.length);
-  };
-  $('discardBtn').onclick = async () => { await backupClear(); $('recover').hidden = true; log('backup discarded'); };
-})();
-
-/* ---------- Gemini calls ---------- */
-const b64 = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(blob); });
-
-async function uploadFile(blob, mime){
-  const start = await fetch(API + '/upload/v1beta/files', {method: 'POST', headers: {
-    'x-goog-api-key': key(), 'X-Goog-Upload-Protocol': 'resumable', 'X-Goog-Upload-Command': 'start',
-    'X-Goog-Upload-Header-Content-Length': String(blob.size), 'X-Goog-Upload-Header-Content-Type': mime, 'Content-Type': 'application/json'},
-    body: JSON.stringify({file: {display_name: 'meeting-test'}})});
-  const url = start.headers.get('x-goog-upload-url');
-  log('upload start', start.status, 'upload-url readable:', !!url);
-  if (!url) throw new Error('เบราว์เซอร์อ่านลิงก์อัปโหลดไม่ได้ (' + start.status + ')');
-  const up = await fetch(url, {method: 'POST', headers: {'X-Goog-Upload-Offset': '0', 'X-Goog-Upload-Command': 'upload, finalize'}, body: blob});
-  const j = await up.json();
-  log('upload done', up.status, j.file && j.file.state);
-  if (!up.ok) throw new Error((j.error && j.error.message) || up.status);
-  let file = j.file;
-  for (let i = 0; i < 60 && file.state === 'PROCESSING'; i++) {
-    await new Promise(r => setTimeout(r, 2000));
-    file = await (await fetch(API + '/v1beta/' + file.name, {headers: {'x-goog-api-key': key()}})).json();
-  }
-  return file.uri;
-}
-
-const sleep = ms => new Promise(res => setTimeout(res, ms));
-// Busy (503/500) and rate limits (429) are usually temporary: wait and retry automatically.
-const RETRY_WAIT = [3000, 8000, 20000];
-async function post(body, onWait){
-  for (let i = 0; ; i++) {
-    const r = await fetch(API + '/v1beta/interactions', {method: 'POST', headers: {'x-goog-api-key': key(), 'Content-Type': 'application/json'}, body: JSON.stringify(body)});
-    const j = await r.json().catch(() => ({}));
-    if (r.ok || ![429, 500, 503].includes(r.status) || i >= RETRY_WAIT.length || /day|daily/i.test(j.error && j.error.message || '')) return {r, j};
-    log('busy', r.status, (j.error && j.error.message || '').slice(0, 120), 'retry in', RETRY_WAIT[i] / 1000 + 's');
-    if (onWait) onWait(i + 1, RETRY_WAIT[i] / 1000, r.status);
-    await sleep(RETRY_WAIT[i]);
-  }
-}
-function friendly(status, msg){
-  if (status === 503 || status === 500) return 'ระบบของ Google คนใช้เยอะอยู่ (ไม่ใช่ปัญหาคีย์) ลองใหม่อีกสักครู่';
-  if (status === 429) return /day|daily|per_day/i.test(msg) ? 'ใช้ครบโควตาฟรีของวันนี้แล้ว พรุ่งนี้ใช้ได้ใหม่' : 'กดถี่เกินโควตาฟรี รอประมาณ 1 นาทีแล้วลองใหม่';
-  if (status === 400 && /api key/i.test(msg)) return 'คีย์ไม่ถูกต้อง ลองคัดลอกคีย์ใหม่';
-  return msg || ('HTTP ' + status);
-}
-async function interact(body, onWait){
-  let {r, j} = await post(body, onWait);
-  if (!r.ok && body.store === false && /store/i.test(JSON.stringify(j))) {
-    log('store:false rejected, retrying without'); delete body.store;
-    ({r, j} = await post(body, onWait));
-  }
-  if (!r.ok) { const m = (j.error && j.error.message) || ''; log('api error', r.status, m.slice(0, 200)); const err = new Error(friendly(r.status, m)); err.status = r.status; throw err; }
-  for (let i = 0; i < 150 && j.status === 'in_progress' && j.id; i++) {
-    await sleep(2000);
-    const pr = await fetch(API + '/v1beta/interactions/' + j.id, {headers: {'x-goog-api-key': key()}});
-    const pj = await pr.json().catch(() => ({}));
-    if (pr.ok) j = pj; else log('poll', pr.status);
-  }
-  if (j.status && j.status !== 'completed') log('interaction status', j.status, j.errors || '');
-  if (j.errors && j.errors.length) throw new Error(j.errors.map(e => e.message).join('; '));
-  return j;
-}
-function outContent(j){
-  const out = [];
-  (j.steps || []).forEach(s => (s.content || []).forEach(c => { if (c.type === 'text') out.push(c); }));
-  return out;
-}
-
-/* ---------- transcribe ---------- */
-let items = [], order = [], names = {}, transcript = '';
-
-$('trBtn').onclick = async () => {
-  if (!key()) { $('trMsg').textContent = 'ใส่คีย์ก่อน'; return; }
-  if (!segments.length) return;
-  $('trBtn').disabled = true; $('trOut').innerHTML = ''; $('names').hidden = true; $('sumBtn').disabled = true;
-  const t = performance.now();
-  const n = segments.length, parts = [];
-  try {
-    for (let k = 0; k < n; k++) {
-      const pre = n > 1 ? `ช่วงที่ ${k + 1}/${n}: ` : '';
-      const busy = (i, w) => $('trMsg').innerHTML = `<span class="spin"></span>${pre}Google คนใช้เยอะ กำลังลองใหม่ครั้งที่ ${i} (รอ ${w} วินาที)...`;
-      const blob = segments[k];
-      let input;
-      if (blob.size < 14 * 1048576) {
-        $('trMsg').innerHTML = `<span class="spin"></span>${pre}กำลังถอดเสียง...`;
-        input = {type: 'audio', data: await b64(blob), mime_type: audioMime};
-        log('sending inline', k, audioMime, blob.size);
-      } else {
-        $('trMsg').innerHTML = `<span class="spin"></span>${pre}กำลังอัปโหลดไฟล์...`;
-        input = {type: 'audio', uri: await uploadFile(blob, audioMime), mime_type: audioMime};
-        $('trMsg').innerHTML = `<span class="spin"></span>${pre}กำลังถอดเสียง...`;
-      }
-      const mode = {type: 'verbatim'};
-      if ($('diar').checked) mode.diarization_mode = 'speaker';
-      const tc = {mode};
-      if ($('thai').checked) tc.language_codes = ['th-TH', 'en-US'];
-      const s0 = performance.now();
-      const j = await interact({model: TR_MODEL, input: [input], generation_config: {transcription_config: tc}, store: false}, busy);
-      const content = outContent(j);
-      const text = content.map(c => c.text).join('\n').trim();
-      const anns = content.flatMap(c => (c.annotations || []).filter(a => a.type === 'word_info' && typeof a.text === 'string').map(a => ({spk: a.speaker || null, text: a.text.trim()}))).filter(a => a.text);
-      log('segment transcribed', k, {secs: +((performance.now() - s0) / 1000).toFixed(1), chars: text.length, anns: anns.length, speakers: new Set(anns.map(a => a.spk)).size, annLen: anns.slice(0, 4).map(a => a.text.length)});
-      parts.push({anns: anns.length ? anns : (text ? [{spk: null, text}] : [])});
-    }
-    ({items, order} = stitch(parts));
-    names = {};
-    const secs = ((performance.now() - t) / 1000).toFixed(1);
-    log('transcribed', {secs: +secs, segs: n, items: items.length, speakers: order.length});
-    if (!items.length) { $('trMsg').textContent = '⚠️ ไม่ได้ข้อความกลับมา ดูบันทึกทางเทคนิค'; return; }
-    $('trMsg').textContent = `✅ เสร็จใน ${secs} วินาที` + (order.length ? ` · พบ ${order.length} คน` : '');
-    buildNameInputs(); renderTranscript();
-    $('rateBox').hidden = false; $('sumBtn').disabled = false;
-  } catch (e) {
-    log('transcribe error', String(e.message || e));
-    $('trMsg').textContent = '❌ ' + (n > 1 ? `ถอดได้ ${parts.length}/${n} ช่วง: ` : '') + (e.message || e);
-  } finally { $('trBtn').disabled = false; }
-};
-
-/* Join segments. The last OV seconds of one segment are the first OV seconds of the next,
-   so the same sentences show up twice: matching them tells us which local speaker label
-   in the new segment is which person from before, and lets us drop the duplicate text. */
-const norm = s => s.replace(/[\s.,!?'"“”…\-–—:;()]/g, '');
-function bigrams(s){ const b = new Map(); for (let i = 0; i < s.length - 1; i++) { const g = s.slice(i, i + 2); b.set(g, (b.get(g) || 0) + 1); } return b; }
-function overlapScore(a, b){
-  a = norm(a); b = norm(b);
-  if (a.length < 6 || b.length < 6) return 0;
-  const A = bigrams(a), B = bigrams(b); let hit = 0, na = 0, nb = 0;
-  A.forEach(v => na += v); B.forEach(v => nb += v);
-  A.forEach((v, g) => hit += Math.min(v, B.get(g) || 0));
-  return hit / Math.min(na, nb);   // how much of the shorter text appears in the longer one
-}
-function stitch(parts){
-  const out = [], order = []; let gn = 0;
-  parts.forEach((p, k) => {
-    const map = {}, anns = p.anns.map(a => ({...a}));
-    if (k > 0 && out.length) {
-      const tail0 = Math.max(0, out.length - 8), votes = {};
-      anns.slice(0, 8).forEach(h => {
-        let best = 0, bi = -1;
-        for (let i = tail0; i < out.length; i++) { if (out[i].drop) continue; const sc = overlapScore(h.text, out[i].text); if (sc > best) { best = sc; bi = i; } }
-        if (best < 0.6) return;
-        const tl = out[bi];
-        if (h.spk && tl.g) { const v = votes[h.spk] || (votes[h.spk] = {}); v[tl.g] = (v[tl.g] || 0) + norm(h.text).length; }
-        if (norm(tl.text).length <= norm(h.text).length) tl.drop = true; else h.drop = true;
-      });
-      const used = new Set();
-      Object.entries(votes).map(([sp, v]) => [sp, ...Object.entries(v).sort((a, b) => b[1] - a[1])[0]])
-        .sort((a, b) => b[2] - a[2])
-        .forEach(([sp, g]) => { if (!used.has(g)) { map[sp] = g; used.add(g); } });
-      // One unmatched voice left and one earlier person not yet matched: almost always the same person.
-      const freeLocal = [...new Set(anns.map(a => a.spk).filter(sp => sp && !(sp in map)))];
-      const freeGlobal = order.filter(g => !used.has(g));
-      if (Object.keys(map).length && freeLocal.length === 1 && freeGlobal.length === 1) map[freeLocal[0]] = freeGlobal[0];
-      log('stitch', k, {matched: anns.filter(a => a.drop).length + out.filter(o => o.drop && o.seg === k - 1).length, map});
-    }
-    anns.forEach(a => {
-      let g = null;
-      if (a.spk) { if (!(a.spk in map)) { map[a.spk] = 'g' + (++gn); order.push(map[a.spk]); } g = map[a.spk]; }
-      if (!a.drop) out.push({g, text: a.text, seg: k});
-    });
-  });
-  return {items: out.filter(o => !o.drop), order};
-}
-
-const label = g => (names[g] || '').trim() || 'คนที่ ' + (order.indexOf(g) + 1);
-const joinText = (a, b) => !a ? b : a + ' ' + b;
-
-function renderTranscript(){
-  if (!order.length) {
-    const plain = items.map(i => i.text).join('\n');
-    $('trOut').innerHTML = `<div class="plain">${esc(plain)}</div>`; transcript = plain; return;
-  }
-  const lines = [];
-  items.forEach(it => {
-    const who = label(it.g), last = lines[lines.length - 1];
-    if (last && last.who === who) last.t = joinText(last.t, it.text);
-    else lines.push({who, t: it.text, c: Math.min(order.indexOf(it.g) + 1, 6) % 6});
-  });
-  $('trOut').innerHTML = '<div class="tr">' + lines.map(l => `<div class="seg"><span class="spk s${l.c}">${esc(l.who)}</span><p>${esc(l.t)}</p></div>`).join('') + '</div>';
-  transcript = lines.map(l => `${l.who}: ${l.t}`).join('\n');
-}
-
-function buildNameInputs(){
-  if (!order.length) { $('names').hidden = true; return; }
-  $('nameList').innerHTML = order.map((g, i) => {
-    const first = items.find(it => it.g === g);
-    const hint = first ? first.text.slice(0, 40) + (first.text.length > 40 ? '…' : '') : '';
-    return `<label class="nm"><span class="spk s${Math.min(i + 1, 6) % 6}">คนที่ ${i + 1}</span><input type="text" data-g="${g}" placeholder="ใส่ชื่อ" autocomplete="off"><small>${esc(hint)}</small></label>`;
-  }).join('');
-  $('nameList').querySelectorAll('input').forEach(inp => inp.oninput = () => { names[inp.dataset.g] = inp.value; renderTranscript(); });
-  $('names').hidden = false;
-}
-
-$('guessBtn').onclick = async () => {
-  if (!transcript) return;
-  $('guessBtn').disabled = true; $('guessMsg').innerHTML = '<span class="spin"></span>กำลังเดา...';
-  const plain = items.map(it => `คนที่ ${order.indexOf(it.g) + 1}: ${it.text}`).join('\n').slice(0, 30000);
-  const prompt = `จากบทสนทนาด้านล่าง เดาชื่อหรือชื่อเล่นของแต่ละคน โดยดูจากที่คนอื่นเรียก หรือที่แนะนำตัว
-ตอบเป็น JSON อย่างเดียว รูปแบบ {"คนที่ 1": "ชื่อ", "คนที่ 2": ""} ถ้าเดาไม่ได้ให้ใส่ "" ห้ามเดามั่ว
-
-${plain}`;
-  try {
-    const text = await askText(prompt);
-    const m = text.match(/\{[\s\S]*\}/); const guess = m ? JSON.parse(m[0]) : {};
-    let filled = 0;
-    order.forEach((g, i) => {
-      const v = (guess['คนที่ ' + (i + 1)] || '').trim();
-      const inp = $('nameList').querySelector(`input[data-g="${g}"]`);
-      if (v && inp && !inp.value) { inp.value = v; names[g] = v; filled++; }
-    });
-    renderTranscript();
-    log('guess names', {filled, of: order.length});
-    $('guessMsg').textContent = filled ? `เติมให้ ${filled} คน ตรวจดูอีกที แก้ได้` : 'เดาไม่ได้ เพราะในบทสนทนาไม่มีใครเรียกชื่อ พิมพ์เองได้เลย';
-  } catch (e) { log('guess error', String(e.message || e)); $('guessMsg').textContent = '❌ ' + (e.message || e); }
-  finally { $('guessBtn').disabled = false; }
-};
-
-document.querySelectorAll('.rate').forEach(g => g.addEventListener('click', e => {
-  if (e.target.tagName !== 'BUTTON') return;
-  g.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === e.target));
-  ratings[g.dataset.k] = e.target.textContent; log('rating', g.dataset.k, e.target.textContent);
-}));
-
-/* ---------- summary ---------- */
-// Try the stronger model first; fall back to Flash-Lite if it is missing or out of free quota.
-const SUM_MODELS = ['models/gemini-3.5-flash', SUM_MODEL];
-async function askText(prompt, onWait){
-  let err;
-  for (const m of SUM_MODELS) {
-    try {
-      const j = await interact({model: m, input: [{type: 'text', text: prompt}], store: false}, onWait);
-      log('model used', m.replace('models/', ''));
-      return outContent(j).map(c => c.text).join('\n').trim();
-    } catch (e) { err = e; if (![400, 403, 404, 429].includes(e.status)) throw e; log('model fallback', m.replace('models/', ''), e.status); }
-  }
-  throw err;
-}
-
-const RULES = `กติกา:
-- เขียนภาษาไทย อ่านง่าย ใช้ Markdown (หัวข้อ ##, ###, bullet และตาราง)
-- เรียกคนตามชื่อที่ใช้ในบทสนทนา
-- เก็บตัวเลข วันที่ ราคา ชื่อสินค้า ชื่อแคมเปญ ให้ตรงตามที่พูด
-- ห้ามแต่งข้อมูลที่ไม่มีในบทสนทนา ถ้าหัวข้อไหนไม่มีข้อมูลให้เขียนว่า "ไม่มีในบทสนทนา"`;
-const TEMPLATES = {
-  meeting: `คุณเป็นเลขาที่จดรายงานการประชุมอย่างละเอียด สรุปการประชุมต่อไปนี้ตามหัวข้อ:
-## ภาพรวม
-3-5 ประโยค: ประชุมเรื่องอะไร ใครอยู่ในวง ได้ข้อสรุปหลักอะไร
-## รายละเอียดแต่ละประเด็น
-แยกเป็น ### ชื่อประเด็น ตามลำดับที่คุย แต่ละประเด็นบอก: ใครเสนออะไร เหตุผล ข้อมูลหรือตัวเลขที่ยกมา ความเห็นที่ไม่ตรงกัน และสรุปว่าจบที่อะไร
-## สิ่งที่ตกลงกัน
-## สิ่งที่ต้องทำต่อ
-ตาราง: | งาน | ใครทำ | กำหนดส่ง | หมายเหตุ |
-## เรื่องที่ยังค้าง หรือต้องถามเพิ่ม
-## ตัวเลขและข้อมูลสำคัญ`,
-  plan: `คุณเป็นผู้ช่วยวางแผนงาน สรุปบทสนทนาต่อไปนี้ให้เป็นแผนงานที่เอาไปทำต่อได้ทันที ตามหัวข้อ:
-## เป้าหมาย
-## สิ่งที่จะทำ
-แยกเป็น ### ชื่องาน แต่ละงานบอก: ทำอะไร ทำยังไง ใช้อะไรบ้าง
-## ไทม์ไลน์
-ตาราง: | ช่วงเวลา | งาน | ใครทำ |
-## ผู้รับผิดชอบ
-ตาราง: | คน | หน้าที่ |
-## งบประมาณและทรัพยากร
-## วิธีวัดผล (KPI)
-## ความเสี่ยงและทางแก้
-## สิ่งที่ต้องทำสัปดาห์นี้`,
-  short: `สรุปบทสนทนาต่อไปนี้แบบสั้น อ่านจบใน 1 นาที ตามหัวข้อ:
-## ใจความสำคัญ
-ไม่เกิน 5 bullet
-## สิ่งที่ต้องทำต่อ
-bullet: งาน — ใครทำ — กำหนดส่ง`
-};
-
-$('sumBtn').onclick = async () => {
-  if (!transcript) return;
-  $('sumBtn').disabled = true; $('sumOut').innerHTML = '';
-  $('sumMsg').innerHTML = '<span class="spin"></span>กำลังสรุป...';
-  const tpl = $('tpl').value;
-  const prompt = `${TEMPLATES[tpl]}\n\n${RULES}\n\nบทสนทนา:\n${transcript}`;
-  const t = performance.now();
-  try {
-    const text = await askText(prompt, (n, w) => $('sumMsg').innerHTML = `<span class="spin"></span>Google คนใช้เยอะ กำลังลองใหม่ครั้งที่ ${n} (รอ ${w} วินาที)...`);
-    log('summary', {tpl, secs: +((performance.now() - t) / 1000).toFixed(1), inChars: transcript.length, chars: text.length});
-    $('sumMsg').textContent = '✅ เสร็จแล้ว';
-    $('sumOut').innerHTML = md(text);
-  } catch (e) { log('summary error', String(e.message || e)); $('sumMsg').textContent = '❌ ' + (e.message || e); }
-  finally { $('sumBtn').disabled = false; }
-};
-function inline(s){ return esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }
-function md(s){
-  const out = []; let list = false, table = null;
-  const flush = () => {
-    if (list) { out.push('</ul>'); list = false; }
-    if (table) {
-      const rows = table.filter(r => !/^\|?\s*:?-{2,}/.test(r)).map(r => r.replace(/^\||\|$/g, '').split('|').map(c => c.trim()));
-      out.push('<div class="tw"><table>' + rows.map((r, i) => '<tr>' + r.map(c => i ? `<td>${inline(c)}</td>` : `<th>${inline(c)}</th>`).join('') + '</tr>').join('') + '</table></div>');
-      table = null;
-    }
-  };
-  s.split('\n').forEach(raw => {
-    const l = raw.trim();
-    if (/^\|.*\|$/.test(l)) { if (list) { out.push('</ul>'); list = false; } (table || (table = [])).push(l); return; }
-    if (table) flush();
-    if (/^[-*•]\s+/.test(l)) { if (!list) { out.push('<ul>'); list = true; } out.push('<li>' + inline(l.replace(/^[-*•]\s+/, '')) + '</li>'); return; }
-    flush();
-    if (/^###\s/.test(l)) out.push('<h4>' + inline(l.replace(/^#+\s/, '')) + '</h4>');
-    else if (/^#{1,2}\s/.test(l)) out.push('<h3>' + inline(l.replace(/^#+\s/, '')) + '</h3>');
-    else if (l) out.push('<p>' + inline(l) + '</p>');
-  });
-  flush();
-  return out.join('');
-}
-
-$('copySum').onclick = async () => {
-  const txt = $('sumOut').innerText.trim(); if (!txt) return;
-  try { await navigator.clipboard.writeText(txt); $('copySum').textContent = '✅ คัดลอกแล้ว'; } catch { $('copySum').textContent = 'คัดลอกไม่ได้'; }
-  setTimeout(() => $('copySum').textContent = 'คัดลอกสรุป', 2500);
-};
-
-/* ---------- copy report ---------- */
-$('copyLog').onclick = async () => {
-  const txt = ['ผลทดสอบเครื่องอัด', 'ความแม่น: ' + (ratings.acc || '-'), 'แยกคนพูด: ' + (ratings.spk || '-'), $('recResult').innerText.replace(/\n/g, ' '), '---', ...logs].join('\n');
-  try { await navigator.clipboard.writeText(txt); $('copyLog').textContent = '✅ คัดลอกแล้ว ไปวางในแชทได้เลย'; }
-  catch { const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); $('copyLog').textContent = '✅ คัดลอกแล้ว'; }
-  setTimeout(() => $('copyLog').textContent = 'คัดลอกผลทดสอบ', 3000);
-};
-</script>
+<script src="app.js?v=22"></script>
 </body>
 </html>
